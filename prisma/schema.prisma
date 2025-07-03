@@ -16,26 +16,26 @@ model User {
   password  String
   role      String   @default("admin")
   createdAt DateTime @default(now())
-  umkms     Umkm[]
+  updatedAt DateTime @updatedAt
 }
 
-model Umkm {
+model Potensi {
   id          String   @id @default(cuid())
-  name        String
-  owner       String
-  category    String
+  title       String
+  category    String  
   description String
-  contact     String
-  address     String
-  images      UmkmImage[]
+  contact     String?
+  mainImage   String?
+  images      PotensiImage[]
   createdAt   DateTime @default(now())
-  createdBy   String
-  user        User     @relation(fields: [createdBy], references: [id])
+  updatedAt   DateTime @updatedAt
 }
 
-model UmkmImage {
+model PotensiImage {
   id      String @id @default(cuid())
   url     String
-  umkm    Umkm   @relation(fields: [umkmId], references: [id])
-  umkmId  String
+  potensi    Potensi  @relation(fields: [potensiId], references: [id])
+  potensiId  String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
