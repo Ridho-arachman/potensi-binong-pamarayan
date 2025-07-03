@@ -14,7 +14,7 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      String   @default("admin") // Bisa admin atau user
+  role      String   @default("admin")
   createdAt DateTime @default(now())
   umkms     Umkm[]
 }
@@ -26,8 +26,16 @@ model Umkm {
   category    String
   description String
   contact     String
-  imageUrl    String?
+  address     String
+  images      UmkmImage[]
   createdAt   DateTime @default(now())
   createdBy   String
   user        User     @relation(fields: [createdBy], references: [id])
+}
+
+model UmkmImage {
+  id      String @id @default(cuid())
+  url     String
+  umkm    Umkm   @relation(fields: [umkmId], references: [id])
+  umkmId  String
 }
