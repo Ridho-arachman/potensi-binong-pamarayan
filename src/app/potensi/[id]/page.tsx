@@ -25,7 +25,9 @@ export default async function PotensiDetailPage({ params }: Props) {
           />
         )}
         <CardContent>
-          <h1 className="text-2xl font-bold mb-2">{potensi.title}</h1>
+          <h1 className="font-heading text-2xl font-bold mb-2">
+            {potensi.title}
+          </h1>
           <p className="text-muted-foreground mb-4">{potensi.category}</p>
           <p className="mb-4">{potensi.description}</p>
           {potensi.contact && (

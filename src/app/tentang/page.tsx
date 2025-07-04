@@ -1,7 +1,7 @@
 export default function TentangPage() {
   return (
     <section className="container py-10 max-w-2xl">
-      <h1 className="text-2xl font-bold mb-4">Tentang Program</h1>
+      <h1 className="font-heading text-2xl font-bold mb-4">Tentang Program</h1>
       <p>
         Website ini dibuat untuk mendokumentasikan dan mempromosikan potensi
         Desa Binong, Kecamatan Pamarayan, baik dari segi ekonomi, wisata,
