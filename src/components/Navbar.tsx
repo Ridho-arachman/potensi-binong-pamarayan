@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Home, Leaf, Info, Mail, Plus } from "lucide-react";
+import { Home, Leaf, Info, Mail, Plus, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const navItems = [
   { href: "/", label: "Beranda", icon: <Home size={18} /> },
@@ -13,13 +14,17 @@ const navItems = [
 ];
 
 export default function Navbar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <nav className={cn("w-full border-b bg-white sticky top-0 z-50")}>
-      <div className="container flex items-center justify-between py-3">
-        <Link href="/" className="font-bold text-lg">
-          Potensi dan UMKM Desa Binong Pamarayan
+      <div className="container flex items-center justify-between py-3 px-4 sm:px-6">
+        <Link href="/" className="font-bold text-lg sm:text-xl">
+          Desa Binong
         </Link>
-        <div className="flex gap-2">
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex gap-2">
           {navItems.map((item) => (
             <Button
               key={item.href}
@@ -34,7 +39,39 @@ export default function Navbar() {
             </Button>
           ))}
         </div>
+
+        {/* Mobile Menu Button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="md:hidden"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </Button>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t bg-white">
+          <div className="container px-4 py-2">
+            {navItems.map((item) => (
+              <Button
+                key={item.href}
+                asChild
+                variant="ghost"
+                className="w-full justify-start flex items-center gap-2 py-3"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Link href={item.href}>
+                  {item.icon}
+                  {item.label}
+                </Link>
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

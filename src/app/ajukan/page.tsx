@@ -37,23 +37,23 @@ export default function AjukanPage() {
   }
 
   return (
-    <section className="container py-12 flex flex-col items-center min-h-[80vh]">
-      <div className="mb-8 text-center">
-        <h1 className="font-heading text-3xl md:text-4xl font-bold mb-2 text-blue-900">
+    <section className="container py-8 sm:py-12 md:py-14 flex flex-col items-center min-h-[70vh] px-4 sm:px-6">
+      <div className="mb-6 sm:mb-8 text-center">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-blue-900">
           Ajukan Potensi Baru
         </h1>
-        <p className="text-slate-700 max-w-xl mx-auto">
+        <p className="text-slate-700 max-w-xl mx-auto text-sm sm:text-base">
           Isi form di bawah ini untuk mengajukan potensi desa yang belum
           terdata. Data Anda akan diverifikasi sebelum dipublikasikan.
         </p>
       </div>
       <Card className="w-full max-w-lg shadow-lg border-blue-100">
-        <CardContent className="py-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <CardContent className="py-6 sm:py-8 px-4 sm:px-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div>
               <label
                 htmlFor="title"
-                className="block mb-1 font-medium text-blue-900"
+                className="block mb-1 font-medium text-blue-900 text-sm sm:text-base"
               >
                 Nama Potensi *
               </label>
@@ -63,13 +63,13 @@ export default function AjukanPage() {
                 placeholder="Contoh: Wisata Sungai Binong"
                 required
                 onChange={handleChange}
-                className="focus-visible:ring-blue-400"
+                className="focus-visible:ring-blue-400 text-sm sm:text-base"
               />
             </div>
             <div>
               <label
                 htmlFor="category"
-                className="block mb-1 font-medium text-blue-900"
+                className="block mb-1 font-medium text-blue-900 text-sm sm:text-base"
               >
                 Kategori *
               </label>
@@ -79,13 +79,13 @@ export default function AjukanPage() {
                 placeholder="Contoh: Wisata, UMKM, Budaya, dll"
                 required
                 onChange={handleChange}
-                className="focus-visible:ring-blue-400"
+                className="focus-visible:ring-blue-400 text-sm sm:text-base"
               />
             </div>
             <div>
               <label
                 htmlFor="description"
-                className="block mb-1 font-medium text-blue-900"
+                className="block mb-1 font-medium text-blue-900 text-sm sm:text-base"
               >
                 Deskripsi *
               </label>
@@ -95,13 +95,13 @@ export default function AjukanPage() {
                 placeholder="Jelaskan potensi secara singkat dan jelas"
                 required
                 onChange={handleChange}
-                className="focus-visible:ring-blue-400 min-h-[100px]"
+                className="focus-visible:ring-blue-400 min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
               />
             </div>
             <div>
               <label
                 htmlFor="contact"
-                className="block mb-1 font-medium text-blue-900"
+                className="block mb-1 font-medium text-blue-900 text-sm sm:text-base"
               >
                 No. WhatsApp (opsional)
               </label>
@@ -110,13 +110,13 @@ export default function AjukanPage() {
                 name="contact"
                 placeholder="08xxxxxxxxxx"
                 onChange={handleChange}
-                className="focus-visible:ring-blue-400"
+                className="focus-visible:ring-blue-400 text-sm sm:text-base"
               />
             </div>
             <div>
               <label
                 htmlFor="image"
-                className="block mb-1 font-medium text-blue-900"
+                className="block mb-1 font-medium text-blue-900 text-sm sm:text-base"
               >
                 Upload Gambar (opsional)
               </label>
@@ -133,7 +133,11 @@ export default function AjukanPage() {
                 </span>
               )}
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="w-full text-sm sm:text-base"
+              disabled={loading}
+            >
               {loading ? "Mengirim..." : "Kirim"}
             </Button>
           </form>
