@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Home, Leaf, Info, Mail, Plus, Menu, X } from "lucide-react";
+import { Home, Leaf, Info, Mail, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -10,7 +10,6 @@ const navItems = [
   { href: "/potensi", label: "Potensi", icon: <Leaf size={18} /> },
   { href: "/tentang", label: "Tentang", icon: <Info size={18} /> },
   { href: "/kontak", label: "Kontak", icon: <Mail size={18} /> },
-  { href: "/ajukan", label: "Ajukan", icon: <Plus size={18} /> },
 ];
 
 export default function Navbar() {

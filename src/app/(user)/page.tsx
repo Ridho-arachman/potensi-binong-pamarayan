@@ -1,7 +1,6 @@
-import PotensiCard from "@/components/PotensiCard";
-import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,13 +18,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function HomePage() {
-  const potensi = await prisma.potensi.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 3,
-    select: { id: true, title: true, category: true, mainImage: true },
-  });
+// Mock data untuk sementara
+const mockPotensi = [
+  {
+    id: "1",
+    title: "Sungai Ciujung",
+    category: "Wisata Alam",
+    mainImage: "/placeholder.jpg",
+  },
+  {
+    id: "2",
+    title: "Warung Makan Sederhana",
+    category: "UMKM",
+    mainImage: "/placeholder.jpg",
+  },
+  {
+    id: "3",
+    title: "Tari Jaipong",
+    category: "Budaya",
+    mainImage: "/placeholder.jpg",
+  },
+];
 
+export default function HomePage() {
   return (
     <>
       {/* Hero Section */}
@@ -56,8 +71,28 @@ export default async function HomePage() {
           Potensi Terbaru
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {potensi.map((p) => (
-            <PotensiCard key={p.id} {...p} />
+          {mockPotensi.map((p) => (
+            <Card
+              key={p.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="aspect-video bg-gray-200 relative">
+                <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                  📷
+                </div>
+              </div>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">{p.title}</CardTitle>
+                <p className="text-sm text-blue-600 font-medium">
+                  {p.category}
+                </p>
+              </CardHeader>
+              <CardContent>
+                <Button asChild variant="outline" className="w-full">
+                  <Link href={`/potensi/${p.id}`}>Lihat Detail</Link>
+                </Button>
+              </CardContent>
+            </Card>
           ))}
         </div>
         <div className="flex justify-center mt-8 sm:mt-10">
