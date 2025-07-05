@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { comparePassword } from "@/lib/password";
 import prisma from "@/lib/prisma";
+import { signInSchema } from "@/lib/zod";
 
 async function getUserFromDb(email: string, plainPassword: string) {
   const user = await prisma.user.findUnique({ where: { email } });
@@ -23,11 +24,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         let user = null;
-        const email = String(credentials.email);
-        const password = String(credentials.password);
+        const { email, password } = await signInSchema.parseAsync(credentials);
         user = await getUserFromDb(email, password);
         if (!user) {
-          throw new Error("Invalid credentials.");
+          return null;
         }
         return user;
       },
