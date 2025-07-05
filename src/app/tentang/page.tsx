@@ -1,5 +1,21 @@
 import Image from "next/image";
 import { Users, Store, MapPin } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Tentang Desa Binong | Sejarah, Wisata & UMKM Pamarayan",
+  description:
+    "Pelajari sejarah, potensi wisata, dan UMKM Desa Binong, Kecamatan Pamarayan, Serang, Banten. Temukan keunikan budaya dan peluang investasi di desa kami.",
+  keywords:
+    "sejarah Desa Binong, wisata Pamarayan, UMKM desa, budaya lokal, Sungai Ciujung, investasi desa, Serang Banten",
+  openGraph: {
+    title: "Tentang Desa Binong",
+    description:
+      "Pelajari sejarah, potensi wisata, dan UMKM Desa Binong, Pamarayan, Serang, Banten.",
+    type: "website",
+    locale: "id_ID",
+  },
+};
 
 export default function TentangPage() {
   return (

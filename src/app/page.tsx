@@ -2,6 +2,22 @@ import PotensiCard from "@/components/PotensiCard";
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Potensi Desa Binong - Beranda | Wisata, UMKM & Budaya Pamarayan",
+  description:
+    "Selamat datang di website resmi Potensi Desa Binong, Kecamatan Pamarayan, Serang, Banten. Temukan wisata alam, UMKM kreatif, dan budaya lokal yang menarik.",
+  keywords:
+    "Desa Binong, Pamarayan, wisata desa, UMKM, budaya lokal, Serang Banten, potensi desa",
+  openGraph: {
+    title: "Potensi Desa Binong - Beranda",
+    description:
+      "Temukan wisata alam, UMKM kreatif, dan budaya lokal Desa Binong, Pamarayan, Serang, Banten.",
+    type: "website",
+    locale: "id_ID",
+  },
+};
 
 export default async function HomePage() {
   const potensi = await prisma.potensi.findMany({

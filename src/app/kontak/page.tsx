@@ -3,6 +3,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Kontak Desa Binong | Hubungi Kami | Pamarayan, Serang",
+  description:
+    "Hubungi Desa Binong, Pamarayan untuk informasi wisata, UMKM, dan kolaborasi. Email, Instagram, alamat kantor desa, dan form kontak tersedia.",
+  keywords:
+    "kontak Desa Binong, alamat kantor desa, email desa, Instagram desa, Pamarayan Serang, hubungi desa",
+  openGraph: {
+    title: "Kontak Desa Binong",
+    description:
+      "Hubungi Desa Binong, Pamarayan untuk informasi wisata, UMKM, dan kolaborasi.",
+    type: "website",
+    locale: "id_ID",
+  },
+};
 
 export default function KontakPage() {
   return (

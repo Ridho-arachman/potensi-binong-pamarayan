@@ -3,8 +3,42 @@ import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import type { Metadata } from "next";
 
 type Props = { params: { id: string } };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const potensi = await prisma.potensi.findUnique({
+    where: { id: params.id },
+    select: { title: true, description: true, category: true },
+  });
+
+  if (!potensi) {
+    return {
+      title: "Potensi Tidak Ditemukan | Desa Binong",
+      description:
+        "Potensi yang Anda cari tidak ditemukan di Desa Binong, Pamarayan.",
+    };
+  }
+
+  return {
+    title: `${potensi.title} - Potensi Desa Binong | ${potensi.category}`,
+    description:
+      potensi.description.length > 160
+        ? potensi.description.substring(0, 160) + "..."
+        : potensi.description,
+    keywords: `${potensi.title}, ${potensi.category}, Desa Binong, Pamarayan, potensi desa, wisata lokal`,
+    openGraph: {
+      title: potensi.title,
+      description:
+        potensi.description.length > 160
+          ? potensi.description.substring(0, 160) + "..."
+          : potensi.description,
+      type: "article",
+      locale: "id_ID",
+    },
+  };
+}
 
 export default async function PotensiDetailPage({ params }: Props) {
   const potensi = await prisma.potensi.findUnique({
