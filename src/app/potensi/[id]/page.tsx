@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 type Props = { params: { id: string } };
 
@@ -17,7 +18,7 @@ export default async function PotensiDetailPage({ params }: Props) {
     <section className="container py-8 sm:py-12 md:py-14 px-4 sm:px-6">
       <Card>
         {potensi.mainImage && (
-          <img
+          <Image
             src={potensi.mainImage}
             alt={potensi.title}
             className="w-full h-48 sm:h-64 object-cover rounded-t"
@@ -47,7 +48,7 @@ export default async function PotensiDetailPage({ params }: Props) {
           {potensi.images.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 mt-6 sm:mt-8">
               {potensi.images.map((img) => (
-                <img
+                <Image
                   key={img.id}
                   src={img.url}
                   alt="Potensi"
