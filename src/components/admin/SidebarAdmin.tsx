@@ -17,17 +17,11 @@ export default function SidebarAdmin() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLogout = () => {
-    // Hapus cookie langsung
-    document.cookie =
-      "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie =
-      "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    // Redirect ke login page
+  const handleLogout = async () => {
+    await fetch("/api/logout", { method: "POST" });
     router.push("/admin/login");
   };
 
-  // Don't show sidebar on login page
   if (pathname === "/admin/login") {
     return null;
   }
