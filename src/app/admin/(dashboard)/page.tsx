@@ -1,7 +1,40 @@
+import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Store, Users, TrendingUp } from "lucide-react";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  // Ambil data dari database
+  const totalWisata = await prisma.potensi.count({
+    where: { category: "wisata" },
+  });
+  const totalUMKM = await prisma.potensi.count({
+    where: { category: "umkm" },
+  });
+  const totalPotensi = await prisma.potensi.count();
+  // Ambil 3 potensi terbaru
+  const aktivitasTerbaru = await prisma.potensi.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 3,
+  });
+  // Hitung statistik kategori
+  const kategoriList = await prisma.potensi.groupBy({
+    by: ["category"],
+    _count: { category: true },
+  });
+  // Persentase kategori
+  const kategoriStat = kategoriList.map((k) => ({
+    category: k.category,
+    percent:
+      totalPotensi > 0
+        ? Math.round((k._count.category / totalPotensi) * 100)
+        : 0,
+    count: k._count.category,
+  }));
+
+  // Contoh: pengunjung dan pertumbuhan bisa diisi manual/dari tabel lain jika ada
+  const totalPengunjung = 1234; // Ganti dengan query jika ada tabel pengunjung
+  const pertumbuhan = 15; // Ganti dengan query jika ada data pertumbuhan
+
   return (
     <div className="space-y-6">
       <div>
@@ -18,7 +51,7 @@ export default function AdminDashboard() {
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">{totalWisata}</div>
             <p className="text-xs text-muted-foreground">+2 dari bulan lalu</p>
           </CardContent>
         </Card>
@@ -29,7 +62,7 @@ export default function AdminDashboard() {
             <Store className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">28</div>
+            <div className="text-2xl font-bold">{totalUMKM}</div>
             <p className="text-xs text-muted-foreground">+5 dari bulan lalu</p>
           </CardContent>
         </Card>
@@ -40,7 +73,7 @@ export default function AdminDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
+            <div className="text-2xl font-bold">{totalPengunjung}</div>
             <p className="text-xs text-muted-foreground">
               +12% dari bulan lalu
             </p>
@@ -53,7 +86,7 @@ export default function AdminDashboard() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+15%</div>
+            <div className="text-2xl font-bold">+{pertumbuhan}%</div>
             <p className="text-xs text-muted-foreground">+2% dari bulan lalu</p>
           </CardContent>
         </Card>
@@ -66,32 +99,30 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">UMKM Baru Terdaftar</p>
-                  <p className="text-xs text-gray-500">
-                    Warung Makan Sederhana
-                  </p>
+              {aktivitasTerbaru.map((item) => (
+                <div key={item.id} className="flex items-center space-x-4">
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      item.category === "umkm"
+                        ? "bg-green-500"
+                        : item.category === "wisata"
+                        ? "bg-blue-500"
+                        : "bg-yellow-500"
+                    }`}
+                  ></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">
+                      {item.category.charAt(0).toUpperCase() +
+                        item.category.slice(1)}{" "}
+                      Baru
+                    </p>
+                    <p className="text-xs text-gray-500">{item.title}</p>
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {item.createdAt.toLocaleDateString()}
+                  </span>
                 </div>
-                <span className="text-xs text-gray-500">2 jam yang lalu</span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Wisata Diperbarui</p>
-                  <p className="text-xs text-gray-500">Sungai Ciujung</p>
-                </div>
-                <span className="text-xs text-gray-500">1 hari yang lalu</span>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Pengajuan Baru</p>
-                  <p className="text-xs text-gray-500">Budaya Tradisional</p>
-                </div>
-                <span className="text-xs text-gray-500">3 hari yang lalu</span>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -102,38 +133,28 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Wisata Alam</span>
-                <span className="text-sm font-medium">45%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-blue-600 h-2 rounded-full"
-                  style={{ width: "45%" }}
-                ></div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm">UMKM</span>
-                <span className="text-sm font-medium">35%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-green-600 h-2 rounded-full"
-                  style={{ width: "35%" }}
-                ></div>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Budaya</span>
-                <span className="text-sm font-medium">20%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  className="bg-yellow-600 h-2 rounded-full"
-                  style={{ width: "20%" }}
-                ></div>
-              </div>
+              {kategoriStat.map((k) => (
+                <div key={k.category}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">
+                      {k.category.charAt(0).toUpperCase() + k.category.slice(1)}
+                    </span>
+                    <span className="text-sm font-medium">{k.percent}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full ${
+                        k.category === "wisata"
+                          ? "bg-blue-600"
+                          : k.category === "umkm"
+                          ? "bg-green-600"
+                          : "bg-yellow-600"
+                      }`}
+                      style={{ width: `${k.percent}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
