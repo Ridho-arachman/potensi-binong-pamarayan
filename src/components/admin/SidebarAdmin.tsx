@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Store, Menu, X, Home, FileText, Settings, LogOut } from "lucide-react";
+import { Button } from "../ui/button";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: Home },
@@ -16,18 +17,13 @@ export default function SidebarAdmin() {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    // Check if user is logged in (except for login page)
-    if (pathname !== "/admin/login") {
-      const isLoggedIn = localStorage.getItem("adminLoggedIn");
-      if (!isLoggedIn) {
-        router.push("/admin/login");
-      }
-    }
-  }, [router, pathname]);
-
   const handleLogout = () => {
-    localStorage.removeItem("adminLoggedIn");
+    // Hapus cookie langsung
+    document.cookie =
+      "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    // Redirect ke login page
     router.push("/admin/login");
   };
 
@@ -110,13 +106,14 @@ export default function SidebarAdmin() {
             ))}
           </nav>
           <div className="border-t border-gray-200 p-4">
-            <button
+            <Button
               onClick={handleLogout}
+              variant="destructive"
               className="w-full flex items-center px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md"
             >
               <LogOut className="mr-3 h-5 w-5" />
               Keluar
-            </button>
+            </Button>
           </div>
         </div>
       </div>
