@@ -45,23 +45,31 @@ export default function SidebarAdmin() {
               </button>
             </div>
             <nav className="flex-1 space-y-1 px-2 py-4">
-              {navigation.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => {
-                    router.push(item.href);
-                    setSidebarOpen(false);
-                  }}
-                  className={`group flex w-full items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    pathname === item.href
-                      ? "bg-blue-100 text-blue-900"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
-                >
-                  <item.icon className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
-                  {item.name}
-                </button>
-              ))}
+              {navigation.map((item) => {
+                // Cek jika pathname adalah '/admin/kelola' atau '/admin/ajukan' dan item.href adalah '/admin/kelola'
+                const isActive =
+                  (item.href === "/admin/kelola" &&
+                    (pathname === "/admin/kelola" ||
+                      pathname === "/admin/ajukan")) ||
+                  pathname === item.href;
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => {
+                      router.push(item.href);
+                      setSidebarOpen(false);
+                    }}
+                    className={`group flex w-full items-center px-2 py-2 text-sm font-medium rounded-md ${
+                      isActive
+                        ? "bg-blue-100 text-blue-900"
+                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    }`}
+                  >
+                    <item.icon className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
+                    {item.name}
+                  </button>
+                );
+              })}
             </nav>
             <div className="border-t border-gray-200 p-4">
               <button
@@ -83,20 +91,27 @@ export default function SidebarAdmin() {
             <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
-            {navigation.map((item) => (
-              <button
-                key={item.name}
-                onClick={() => router.push(item.href)}
-                className={`group flex w-full cursor-pointer items-center px-2 py-2 text-sm font-medium rounded-md ${
-                  pathname === item.href
-                    ? "bg-blue-100 text-blue-900"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                <item.icon className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
-                {item.name}
-              </button>
-            ))}
+            {navigation.map((item) => {
+              const isActive =
+                (item.href === "/admin/kelola" &&
+                  (pathname === "/admin/kelola" ||
+                    pathname === "/admin/ajukan")) ||
+                pathname === item.href;
+              return (
+                <button
+                  key={item.name}
+                  onClick={() => router.push(item.href)}
+                  className={`group flex w-full cursor-pointer items-center px-2 py-2 text-sm font-medium rounded-md ${
+                    isActive
+                      ? "bg-blue-100 text-blue-900"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  <item.icon className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
+                  {item.name}
+                </button>
+              );
+            })}
           </nav>
           <div className="border-t border-gray-200 p-4">
             <Button
