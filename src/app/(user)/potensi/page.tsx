@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
+import prisma from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Daftar Potensi Desa Binong | Wisata, UMKM & Ekonomi Kreatif",
@@ -18,54 +19,24 @@ export const metadata: Metadata = {
   },
 };
 
-// Mock data untuk sementara
-const mockPotensi = [
-  {
-    id: "1",
-    title: "Sungai Ciujung",
-    category: "Wisata Alam",
-    mainImage: "/placeholder.jpg",
-  },
-  {
-    id: "2",
-    title: "Warung Makan Sederhana",
-    category: "UMKM",
-    mainImage: "/placeholder.jpg",
-  },
-  {
-    id: "3",
-    title: "Tari Jaipong",
-    category: "Budaya",
-    mainImage: "/placeholder.jpg",
-  },
-  {
-    id: "4",
-    title: "Kebun Buah Naga",
-    category: "Wisata Alam",
-    mainImage: "/placeholder.jpg",
-  },
-  {
-    id: "5",
-    title: "Kerajinan Bambu",
-    category: "UMKM",
-    mainImage: "/placeholder.jpg",
-  },
-  {
-    id: "6",
-    title: "Festival Desa",
-    category: "Budaya",
-    mainImage: "/placeholder.jpg",
-  },
-];
+export default async function PotensiListPage() {
+  const potensiList = await prisma.potensi.findMany({
+    select: {
+      id: true,
+      title: true,
+      category: true,
+      mainImage: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
-export default function PotensiListPage() {
   return (
     <section className="container py-8 sm:py-12 md:py-14 px-4 sm:px-6">
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center text-blue-900">
         Daftar Potensi Desa
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-        {mockPotensi.map((p) => (
+        {potensiList.map((p) => (
           <Card
             key={p.id}
             className="overflow-hidden hover:shadow-lg transition-shadow"

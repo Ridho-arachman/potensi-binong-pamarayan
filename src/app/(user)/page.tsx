@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Metadata } from "next";
+import prisma from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Potensi Desa Binong - Beranda | Wisata, UMKM & Budaya Pamarayan",
@@ -18,29 +19,18 @@ export const metadata: Metadata = {
   },
 };
 
-// Mock data untuk sementara
-const mockPotensi = [
-  {
-    id: "1",
-    title: "Sungai Ciujung",
-    category: "Wisata Alam",
-    mainImage: "/placeholder.jpg",
-  },
-  {
-    id: "2",
-    title: "Warung Makan Sederhana",
-    category: "UMKM",
-    mainImage: "/placeholder.jpg",
-  },
-  {
-    id: "3",
-    title: "Tari Jaipong",
-    category: "Budaya",
-    mainImage: "/placeholder.jpg",
-  },
-];
+export default async function HomePage() {
+  const potensiTerbaru = await prisma.potensi.findMany({
+    select: {
+      id: true,
+      title: true,
+      category: true,
+      mainImage: true,
+    },
+    orderBy: { createdAt: "desc" },
+    take: 3,
+  });
 
-export default function HomePage() {
   return (
     <>
       {/* Hero Section */}
@@ -71,7 +61,7 @@ export default function HomePage() {
           Potensi Terbaru
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          {mockPotensi.map((p) => (
+          {potensiTerbaru.map((p) => (
             <Card
               key={p.id}
               className="overflow-hidden hover:shadow-lg transition-shadow"
