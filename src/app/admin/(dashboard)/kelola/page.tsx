@@ -65,9 +65,9 @@ export default async function KelolaPotensiPage() {
                         <Button size="sm" variant="outline">
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" variant="outline">
+                        <Link href={`/admin/kelola/${potensi.id}`}>
                           <Edit className="h-4 w-4" />
-                        </Button>
+                        </Link>
                         <Button
                           size="sm"
                           variant="outline"
