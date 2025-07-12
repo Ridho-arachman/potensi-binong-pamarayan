@@ -1,43 +1,15 @@
-"use client";
-
+import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Eye } from "lucide-react";
 
-// Mock data untuk potensi
-const mockPotensi = [
-  {
-    id: "1",
-    title: "Sungai Ciujung",
-    category: "Wisata Alam",
-    status: "Published",
-    createdAt: "2024-01-15",
-  },
-  {
-    id: "2",
-    title: "Warung Makan Sederhana",
-    category: "UMKM",
-    status: "Published",
-    createdAt: "2024-01-10",
-  },
-  {
-    id: "3",
-    title: "Tari Jaipong",
-    category: "Budaya",
-    status: "Draft",
-    createdAt: "2024-01-05",
-  },
-  {
-    id: "4",
-    title: "Kebun Buah Naga",
-    category: "Wisata Alam",
-    status: "Published",
-    createdAt: "2024-01-01",
-  },
-];
+export default async function KelolaPotensiPage() {
+  // Ambil data potensi dari database
+  const potensiList = await prisma.potensi.findMany({
+    orderBy: { createdAt: "desc" },
+  });
 
-export default function KelolaPotensiPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -65,25 +37,24 @@ export default function KelolaPotensiPage() {
                 </tr>
               </thead>
               <tbody>
-                {mockPotensi.map((potensi) => (
+                {potensiList.map((potensi) => (
                   <tr key={potensi.id} className="border-b hover:bg-gray-50">
                     <td className="py-3 px-4">{potensi.title}</td>
                     <td className="py-3 px-4">
-                      <Badge variant="outline">{potensi.category}</Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge
-                        variant={
-                          potensi.status === "Published"
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
-                        {potensi.status}
+                      <Badge variant="outline">
+                        {potensi.category.charAt(0).toUpperCase() +
+                          potensi.category.slice(1)}
                       </Badge>
                     </td>
+                    <td className="py-3 px-4">
+                      <Badge variant="default">Published</Badge>
+                    </td>
                     <td className="py-3 px-4 text-gray-600">
-                      {new Date(potensi.createdAt).toLocaleDateString("id-ID")}
+                      {potensi.createdAt instanceof Date
+                        ? potensi.createdAt.toLocaleDateString("id-ID")
+                        : new Date(potensi.createdAt).toLocaleDateString(
+                            "id-ID"
+                          )}
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex space-x-2">
