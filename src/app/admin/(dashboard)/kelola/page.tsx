@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Trash2, Eye } from "lucide-react";
+import Link from "next/link";
 
 export default async function KelolaPotensiPage() {
   // Ambil data potensi dari database
@@ -17,9 +18,12 @@ export default async function KelolaPotensiPage() {
           <h1 className="text-3xl font-bold text-gray-900">Kelola Potensi</h1>
           <p className="text-gray-600">Kelola semua potensi Desa Binong</p>
         </div>
-        <Button>+ Tambah Potensi</Button>
+        <Button asChild size="lg" className="gap-2">
+          <Link href="/admin/ajukan">
+            <span className="text-xl font-bold">+</span> Tambah Potensi
+          </Link>
+        </Button>
       </div>
-
       <Card>
         <CardHeader>
           <CardTitle>Daftar Potensi</CardTitle>

@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Store, Menu, X, Home, FileText, Settings, LogOut } from "lucide-react";
+import { Store, Menu, X, Home, Settings, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: Home },
   { name: "Kelola Potensi", href: "/admin/kelola", icon: Store },
-  { name: "Ajukan Potensi", href: "/admin/ajukan", icon: FileText },
   { name: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
 ];
 
@@ -88,7 +87,7 @@ export default function SidebarAdmin() {
               <button
                 key={item.name}
                 onClick={() => router.push(item.href)}
-                className={`group flex w-full items-center px-2 py-2 text-sm font-medium rounded-md ${
+                className={`group flex w-full cursor-pointer items-center px-2 py-2 text-sm font-medium rounded-md ${
                   pathname === item.href
                     ? "bg-blue-100 text-blue-900"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -103,7 +102,7 @@ export default function SidebarAdmin() {
             <Button
               onClick={handleLogout}
               variant="destructive"
-              className="w-full flex items-center px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md"
+              className="w-full flex cursor-pointer items-center px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md"
             >
               <LogOut className="mr-3 h-5 w-5" />
               Keluar
