@@ -36,10 +36,10 @@ export default function TentangPage() {
                 sejarah panjang yang bermula dari zaman kolonial Belanda.
               </p>
               <p className="text-gray-700 leading-relaxed mb-4">
-                Nama "Binong" berasal dari kata dalam bahasa Sunda yang berarti
-                "tempat yang tinggi" atau "bukit kecil". Hal ini sesuai dengan
-                kondisi geografis desa yang berada di dataran tinggi dengan
-                pemandangan yang indah.
+                Nama &quot;Binong&quot; berasal dari kata dalam bahasa Sunda
+                yang berarti &quot;tempat yang tinggi&quot; atau &quot;bukit
+                kecil&quot;. Hal ini sesuai dengan kondisi geografis desa yang
+                berada di dataran tinggi dengan pemandangan yang indah.
               </p>
               <p className="text-gray-700 leading-relaxed">
                 Sejak dahulu, Desa Binong dikenal sebagai desa yang subur dengan
@@ -215,6 +215,24 @@ export default function TentangPage() {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Google Maps Lokasi Desa Binong */}
+        <div className="mt-12">
+          <h2 className="text-xl sm:text-2xl font-bold text-blue-900 mb-4 text-center">
+            Lokasi Desa Binong
+          </h2>
+          <div className="rounded-xl overflow-hidden shadow border border-blue-100 mx-auto max-w-3xl">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31728.152321237776!2d106.2891902185314!3d-6.261221938529664!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e421b0e39cc6ec5%3A0x94740a34169522db!2sBinong%2C%20Kec.%20Pamarayan%2C%20Kabupaten%20Serang%2C%20Banten!5e0!3m2!1sid!2sid!4v1752479074554!5m2!1sid!2sid"
+              style={{ width: "100%", border: 0 }}
+              height={400}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Lokasi Desa Binong di Google Maps"
+            ></iframe>
+          </div>
         </div>
       </div>
     </section>
