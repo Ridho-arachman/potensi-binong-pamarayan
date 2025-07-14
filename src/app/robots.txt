@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://web-potensi-desa-binong-pamarayan.vercel.app/sitemap.xml 
