@@ -61,8 +61,9 @@ export default function TentangPage() {
                     Visi
                   </h3>
                   <p className="text-gray-700">
-                    "Terwujudnya Desa Binong yang mandiri, maju, dan sejahtera
-                    melalui pengembangan potensi lokal yang berkelanjutan"
+                    &quot;Terwujudnya Desa Binong yang mandiri, maju, dan
+                    sejahtera melalui pengembangan potensi lokal yang
+                    berkelanjutan&quot;
                   </p>
                 </div>
                 <div>
