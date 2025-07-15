@@ -35,7 +35,6 @@ export default async function KelolaPotensiPage() {
                 <tr className="border-b">
                   <th className="text-left py-3 px-4 font-medium">Judul</th>
                   <th className="text-left py-3 px-4 font-medium">Kategori</th>
-                  <th className="text-left py-3 px-4 font-medium">Status</th>
                   <th className="text-left py-3 px-4 font-medium">Tanggal</th>
                   <th className="text-left py-3 px-4 font-medium">Aksi</th>
                 </tr>
@@ -49,9 +48,6 @@ export default async function KelolaPotensiPage() {
                         {potensi.category.charAt(0).toUpperCase() +
                           potensi.category.slice(1)}
                       </Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      <Badge variant="default">Published</Badge>
                     </td>
                     <td className="py-3 px-4 text-gray-600">
                       {potensi.createdAt instanceof Date

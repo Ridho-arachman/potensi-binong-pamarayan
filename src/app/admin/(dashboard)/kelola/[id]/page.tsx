@@ -27,7 +27,6 @@ export default function EditPotensiPage() {
     category: "",
     description: "",
     contact: "",
-    location: "",
     images: [] as File[],
     existingImages: [] as { id: string; url: string }[],
   });
@@ -47,7 +46,6 @@ export default function EditPotensiPage() {
         category: data.category,
         description: data.description,
         contact: data.contact || "",
-        location: data.location || "",
         images: [],
         existingImages: data.images || [],
       });
@@ -95,7 +93,6 @@ export default function EditPotensiPage() {
       body.append("category", form.category);
       body.append("description", form.description);
       body.append("contact", form.contact);
-      body.append("location", form.location);
       form.images.forEach((file) => body.append("images", file));
       body.append(
         "existingImageIds",
@@ -165,27 +162,15 @@ export default function EditPotensiPage() {
                 disabled={loading}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="contact">Kontak</Label>
-                <Input
-                  id="contact"
-                  placeholder="Nomor telepon atau email"
-                  value={form.contact}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
-              <div>
-                <Label htmlFor="location">Lokasi</Label>
-                <Input
-                  id="location"
-                  placeholder="Alamat atau lokasi"
-                  value={form.location}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
+            <div>
+              <Label htmlFor="contact">Kontak</Label>
+              <Input
+                id="contact"
+                placeholder="Nomor telepon atau email"
+                value={form.contact}
+                onChange={handleChange}
+                disabled={loading}
+              />
             </div>
             <div>
               <Label htmlFor="images">Upload Gambar Baru</Label>

@@ -23,7 +23,6 @@ export default function AjukanPotensiPage() {
     category: "",
     description: "",
     contact: "",
-    location: "",
     images: [] as File[],
   });
   const router = useRouter();
@@ -38,7 +37,7 @@ export default function AjukanPotensiPage() {
         (target as HTMLInputElement).files as FileList
       ).slice(0, 5);
       setForm((prev) => ({ ...prev, images: files }));
-    } else {
+    } else if (id !== "location") {
       setForm((prev) => ({ ...prev, [id]: value }));
     }
   };
@@ -49,13 +48,7 @@ export default function AjukanPotensiPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      !form.title ||
-      !form.category ||
-      !form.description ||
-      !form.contact ||
-      !form.location
-    ) {
+    if (!form.title || !form.category || !form.description || !form.contact) {
       toast("Gagal", { description: "Semua field wajib diisi!" });
       return;
     }
@@ -66,7 +59,6 @@ export default function AjukanPotensiPage() {
       body.append("category", form.category);
       body.append("description", form.description);
       body.append("contact", form.contact);
-      body.append("location", form.location);
       form.images.forEach((file) => body.append("images", file));
       const res = await fetch("/api/potensi", {
         method: "POST",
@@ -141,27 +133,15 @@ export default function AjukanPotensiPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="contact">Kontak</Label>
-                <Input
-                  id="contact"
-                  placeholder="Nomor telepon atau email"
-                  value={form.contact}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
-              <div>
-                <Label htmlFor="location">Lokasi</Label>
-                <Input
-                  id="location"
-                  placeholder="Alamat atau lokasi"
-                  value={form.location}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
+            <div>
+              <Label htmlFor="contact">Kontak</Label>
+              <Input
+                id="contact"
+                placeholder="Nomor telepon atau email"
+                value={form.contact}
+                onChange={handleChange}
+                disabled={loading}
+              />
             </div>
 
             <div>
