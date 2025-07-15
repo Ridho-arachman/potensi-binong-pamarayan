@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 import prisma from "@/lib/prisma";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Daftar Potensi Desa Binong | Wisata, UMKM & Ekonomi Kreatif",
@@ -42,9 +43,19 @@ export default async function PotensiListPage() {
             className="overflow-hidden hover:shadow-lg transition-shadow"
           >
             <div className="aspect-video bg-gray-200 relative">
-              <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-                📷
-              </div>
+              {p.mainImage ? (
+                <Image
+                  src={p.mainImage}
+                  alt={p.title}
+                  width={100}
+                  height={100}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                  📷
+                </div>
+              )}
             </div>
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">{p.title}</CardTitle>
