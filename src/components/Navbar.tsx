@@ -5,6 +5,7 @@ import { Home, Leaf, Info, Mail, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const navItems = [
   { href: "/", label: "Beranda", icon: <Home size={18} /> },
@@ -20,7 +21,17 @@ export default function Navbar() {
   return (
     <nav className={cn("w-full border-b bg-white sticky top-0 z-50")}>
       <div className="container flex items-center justify-between py-3 px-4 sm:px-6">
-        <Link href="/" className="font-bold text-lg sm:text-xl">
+        <Link
+          href="/"
+          className="font-bold text-lg sm:text-xl flex items-center gap-2"
+        >
+          <Image
+            src="/logo.jpeg"
+            alt="Logo Desa Binong"
+            width={36}
+            height={36}
+            className="rounded-sm"
+          />
           Desa Binong
         </Link>
 
