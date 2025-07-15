@@ -36,7 +36,7 @@ export default async function HomePage() {
     <>
       {/* Hero Section */}
       <section className="relative py-12 sm:py-16 md:py-20 lg:py-28 bg-gradient-to-br from-blue-50 via-white to-slate-100 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none select-none opacity-30 bg-[url('/globe.svg')] bg-no-repeat bg-right-bottom bg-contain" />
+        <div className="absolute inset-0 pointer-events-none select-none opacity-30 bg-[url('/logo.jpeg')] bg-no-repeat bg-right-bottom bg-contain" />
         <div className="container relative z-10 text-center px-4 sm:px-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-3 sm:mb-4 text-blue-900 drop-shadow-sm tracking-tight">
             Selamat Datang di Website
