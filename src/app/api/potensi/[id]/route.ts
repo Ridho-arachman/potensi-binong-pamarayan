@@ -25,7 +25,6 @@ export async function PATCH(
   const category = form.get("category") as string;
   const description = form.get("description") as string;
   const contact = form.get("contact") as string;
-  const location = form.get("location") as string;
   const files = form.getAll("images") as File[];
   const existingImageIds = JSON.parse(
     (form.get("existingImageIds") as string) || "[]"
@@ -95,23 +94,31 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  // Hapus gambar dari storage
-  const potensi = await prisma.potensi.findUnique({
-    where: { id: params.id },
-    include: { images: true },
-  });
-  if (potensi) {
-    for (const img of potensi.images) {
-      const filePath = path.join(
-        process.cwd(),
-        "public",
-        img.url.replace("/uploads", "uploads")
-      );
-      try {
-        await unlink(filePath);
-      } catch {}
+  try {
+    // Hapus gambar dari storage
+    const potensi = await prisma.potensi.findUnique({
+      where: { id: params.id },
+      include: { images: true },
+    });
+    if (potensi) {
+      for (const img of potensi.images) {
+        const filePath = path.join(
+          process.cwd(),
+          "public",
+          img.url.replace("/uploads", "uploads")
+        );
+        try {
+          await unlink(filePath);
+        } catch {}
+      }
     }
+    await prisma.potensi.delete({ where: { id: params.id } });
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("Error saat menghapus potensi:", err);
+    return NextResponse.json(
+      { error: (err as Error).message || "Internal Server Error" },
+      { status: 500 }
+    );
   }
-  await prisma.potensi.delete({ where: { id: params.id } });
-  return NextResponse.json({ success: true });
 }

@@ -34,7 +34,7 @@ model Potensi {
 model PotensiImage {
   id      String @id @default(cuid())
   url     String
-  potensi    Potensi  @relation(fields: [potensiId], references: [id])
+  potensi    Potensi  @relation(fields: [potensiId], references: [id], onDelete: Cascade)
   potensiId  String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
