@@ -92,10 +92,12 @@ export default function SidebarAdmin() {
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
             {navigation.map((item) => {
+              // Cek jika pathname adalah '/admin/kelola', '/admin/ajukan', atau '/admin/kelola/[id]' dan item.href adalah '/admin/kelola'
               const isActive =
                 (item.href === "/admin/kelola" &&
                   (pathname === "/admin/kelola" ||
-                    pathname === "/admin/ajukan")) ||
+                    pathname === "/admin/ajukan" ||
+                    pathname.startsWith("/admin/kelola/"))) ||
                 pathname === item.href;
               return (
                 <button
