@@ -16,6 +16,9 @@ export default async function AdminDashboard() {
     where: { category: "umkm" },
   });
   const totalPotensi = await prisma.potensi.count();
+  const totalBudaya = await prisma.potensi.count({
+    where: { category: "budaya" },
+  });
   // Ambil 3 potensi terbaru
   const aktivitasTerbaru = await prisma.potensi.findMany({
     orderBy: { createdAt: "desc" },
@@ -38,7 +41,47 @@ export default async function AdminDashboard() {
 
   // Contoh: pengunjung dan pertumbuhan bisa diisi manual/dari tabel lain jika ada
   const totalPengunjung = 1234; // Ganti dengan query jika ada tabel pengunjung
-  const pertumbuhan = 15; // Ganti dengan query jika ada data pertumbuhan
+
+  // Hitung pertumbuhan potensi bulan ini vs bulan lalu
+  const now = new Date();
+  const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastDayLastMonth = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    0,
+    23,
+    59,
+    59,
+    999
+  );
+
+  const potensiThisMonth = await prisma.potensi.count({
+    where: {
+      createdAt: {
+        gte: firstDayThisMonth,
+        lte: now,
+      },
+    },
+  });
+  const potensiLastMonth = await prisma.potensi.count({
+    where: {
+      createdAt: {
+        gte: firstDayLastMonth,
+        lte: lastDayLastMonth,
+      },
+    },
+  });
+  let pertumbuhan = 0;
+  if (potensiLastMonth === 0 && potensiThisMonth > 0) {
+    pertumbuhan = 100;
+  } else if (potensiLastMonth === 0 && potensiThisMonth === 0) {
+    pertumbuhan = 0;
+  } else {
+    pertumbuhan = Math.round(
+      ((potensiThisMonth - potensiLastMonth) / potensiLastMonth) * 100
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -74,6 +117,30 @@ export default async function AdminDashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Budaya</CardTitle>
+            <TrendingUp className="h-4 w-4 text-yellow-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalBudaya}</div>
+            <p className="text-xs text-muted-foreground">+1 dari bulan lalu</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pertumbuhan</CardTitle>
+            <TrendingUp className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pertumbuhan}%</div>
+            <p className="text-xs text-muted-foreground">
+              Pertumbuhan potensi bulan ini
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pengunjung</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -82,17 +149,6 @@ export default async function AdminDashboard() {
             <p className="text-xs text-muted-foreground">
               +12% dari bulan lalu
             </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pertumbuhan</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">+{pertumbuhan}%</div>
-            <p className="text-xs text-muted-foreground">+2% dari bulan lalu</p>
           </CardContent>
         </Card>
       </div>
