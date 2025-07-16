@@ -7,6 +7,17 @@ export const metadata = {
   description: "Panel admin untuk mengelola potensi Desa Binong.",
 };
 
+// Fungsi format tanggal Indonesia
+function formatTanggalIndo(dateString: string | Date | undefined): string {
+  if (!dateString) return "Belum ada data";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("id-ID", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 export default async function AdminDashboard() {
   // Ambil data dari database
   const totalWisata = await prisma.potensi.count({
@@ -83,6 +94,23 @@ export default async function AdminDashboard() {
     );
   }
 
+  // Ambil potensi terbaru per kategori
+  const lastWisata = await prisma.potensi.findFirst({
+    where: { category: "wisata" },
+    orderBy: { createdAt: "desc" },
+    select: { title: true, createdAt: true },
+  });
+  const lastUMKM = await prisma.potensi.findFirst({
+    where: { category: "umkm" },
+    orderBy: { createdAt: "desc" },
+    select: { title: true, createdAt: true },
+  });
+  const lastBudaya = await prisma.potensi.findFirst({
+    where: { category: "budaya" },
+    orderBy: { createdAt: "desc" },
+    select: { title: true, createdAt: true },
+  });
+
   return (
     <div className="space-y-6">
       <div>
@@ -100,7 +128,11 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalWisata}</div>
-            <p className="text-xs text-muted-foreground">+2 dari bulan lalu</p>
+            <p className="text-xs text-muted-foreground">
+              {lastWisata?.title && lastWisata?.createdAt
+                ? `Terakhir: ${formatTanggalIndo(lastWisata.createdAt)}`
+                : "Belum ada data"}
+            </p>
           </CardContent>
         </Card>
 
@@ -111,7 +143,11 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalUMKM}</div>
-            <p className="text-xs text-muted-foreground">+5 dari bulan lalu</p>
+            <p className="text-xs text-muted-foreground">
+              {lastUMKM?.title && lastUMKM?.createdAt
+                ? `Terakhir: ${formatTanggalIndo(lastUMKM.createdAt)}`
+                : "Belum ada data"}
+            </p>
           </CardContent>
         </Card>
 
@@ -122,7 +158,11 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalBudaya}</div>
-            <p className="text-xs text-muted-foreground">+1 dari bulan lalu</p>
+            <p className="text-xs text-muted-foreground">
+              {lastBudaya?.title && lastBudaya?.createdAt
+                ? `Terakhir: ${formatTanggalIndo(lastBudaya.createdAt)}`
+                : "Belum ada data"}
+            </p>
           </CardContent>
         </Card>
 
