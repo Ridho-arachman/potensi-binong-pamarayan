@@ -2,6 +2,11 @@ import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Store, Users, TrendingUp } from "lucide-react";
 
+export const metadata = {
+  title: "Dashboard Admin | Desa Binong",
+  description: "Panel admin untuk mengelola potensi Desa Binong.",
+};
+
 export default async function AdminDashboard() {
   // Ambil data dari database
   const totalWisata = await prisma.potensi.count({
