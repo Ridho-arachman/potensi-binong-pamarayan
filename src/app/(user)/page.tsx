@@ -102,6 +102,79 @@ export default async function HomePage() {
           </Button>
         </div>
       </section>
+
+      {/* Section Statistik Potensi Desa */}
+      <section className="container py-8 sm:py-12 md:py-14 px-4 sm:px-6">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4 sm:mb-6 text-center text-blue-900">
+          Statistik Potensi Desa Binong Pamarayan
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
+            <span className="text-4xl mb-3">🏪</span>
+            <h3 className="font-bold text-blue-800 text-lg mb-1">UMKM</h3>
+            <p className="text-2xl font-bold text-blue-900 mb-1">12</p>
+            <span className="text-slate-500 text-sm">Total UMKM</span>
+          </div>
+          <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
+            <span className="text-4xl mb-3">🌄</span>
+            <h3 className="font-bold text-blue-800 text-lg mb-1">Wisata</h3>
+            <p className="text-2xl font-bold text-blue-900 mb-1">5</p>
+            <span className="text-slate-500 text-sm">Total Wisata</span>
+          </div>
+          <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
+            <span className="text-4xl mb-3">👥</span>
+            <h3 className="font-bold text-blue-800 text-lg mb-1">Pengunjung</h3>
+            <p className="text-2xl font-bold text-blue-900 mb-1">1.200</p>
+            <span className="text-slate-500 text-sm">Pengunjung Tahun Ini</span>
+          </div>
+          <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
+            <span className="text-4xl mb-3">📈</span>
+            <h3 className="font-bold text-blue-800 text-lg mb-1">
+              Pertumbuhan
+            </h3>
+            <p className="text-2xl font-bold text-green-600 mb-1">10%</p>
+            <span className="text-slate-500 text-sm">Pertumbuhan Bulanan</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Keunggulan Desa Binong */}
+      <section className="container py-8 sm:py-12 md:py-14 px-4 sm:px-6">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4 sm:mb-6 text-center text-blue-900">
+          Mengapa Memilih Desa Binong?
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center text-center border border-blue-100">
+            <span className="text-4xl mb-3">🌳</span>
+            <h3 className="font-bold text-blue-800 mb-2">Alam yang Asri</h3>
+            <p className="text-slate-700">
+              Dikelilingi sawah, sungai, dan udara segar, Desa Binong menawarkan
+              pesona alam yang menenangkan dan cocok untuk wisata keluarga
+              maupun edukasi.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center text-center border border-blue-100">
+            <span className="text-4xl mb-3">🤝</span>
+            <h3 className="font-bold text-blue-800 mb-2">
+              Warga Ramah & Gotong Royong
+            </h3>
+            <p className="text-slate-700">
+              Kehangatan dan kerjasama warga menjadi kekuatan utama dalam
+              membangun desa yang inklusif, aman, dan nyaman untuk semua.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center text-center border border-blue-100">
+            <span className="text-4xl mb-3">💡</span>
+            <h3 className="font-bold text-blue-800 mb-2">
+              UMKM & Budaya Kreatif
+            </h3>
+            <p className="text-slate-700">
+              Banyak UMKM inovatif dan tradisi budaya yang terus dilestarikan,
+              menciptakan peluang ekonomi dan wisata edukasi yang menarik.
+            </p>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
