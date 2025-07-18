@@ -1,72 +1,122 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function PengaturanPage() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const res = await fetch("/api/user");
+        if (!res.ok) return;
+        const data = await res.json();
+        setForm((prev) => ({
+          ...prev,
+          name: data.name || "",
+          email: data.email || "",
+        }));
+      } catch {}
+    }
+    fetchProfile();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setForm((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email) {
+      toast("Gagal", { description: "Nama dan email wajib diisi!" });
+      return;
+    }
+    if (form.newPassword && form.newPassword !== form.confirmPassword) {
+      toast("Gagal", { description: "Konfirmasi password tidak cocok!" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/user", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          password: form.newPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal update profil");
+      toast("Berhasil", { description: "Profil admin berhasil diupdate!" });
+      setForm((prev) => ({
+        ...prev,
+        name: data.name,
+        email: data.email,
+        newPassword: "",
+        confirmPassword: "",
+      }));
+    } catch (err: unknown) {
+      toast("Gagal", {
+        description: err instanceof Error ? err.message : "Terjadi kesalahan",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Pengaturan</h1>
-        <p className="text-gray-600">
-          Kelola pengaturan website dan akun admin
-        </p>
+        <p className="text-gray-600">Ubah profil admin Anda di sini.</p>
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pengaturan Website */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Pengaturan Website</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Profil Admin</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <Label htmlFor="siteName">Nama Website</Label>
-              <Input id="siteName" defaultValue="Potensi Desa Binong" />
-            </div>
-            <div>
-              <Label htmlFor="siteDescription">Deskripsi Website</Label>
+              <Label htmlFor="name">Username</Label>
               <Input
-                id="siteDescription"
-                defaultValue="Website resmi potensi Desa Binong, Pamarayan"
+                id="name"
+                value={form.name}
+                onChange={handleChange}
+                disabled={loading}
               />
             </div>
             <div>
-              <Label htmlFor="contactEmail">Email Kontak</Label>
-              <Input id="contactEmail" defaultValue="info@desabinong.id" />
-            </div>
-            <div>
-              <Label htmlFor="contactPhone">Telepon Kontak</Label>
-              <Input id="contactPhone" defaultValue="+62 254 123456" />
-            </div>
-            <Button className="w-full">Simpan Pengaturan</Button>
-          </CardContent>
-        </Card>
-
-        {/* Pengaturan Akun */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Pengaturan Akun</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue="admin" />
-            </div>
-            <div>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" defaultValue="admin@desabinong.id" />
+              <Input
+                id="email"
+                type="email"
+                value={form.email}
+                onChange={handleChange}
+                disabled={loading}
+              />
             </div>
             <div>
               <Label htmlFor="newPassword">Password Baru</Label>
               <Input
                 id="newPassword"
                 type="password"
-                placeholder="Masukkan password baru"
+                placeholder="Kosongkan jika tidak ingin mengubah"
+                value={form.newPassword}
+                onChange={handleChange}
+                disabled={loading}
               />
             </div>
             <div>
@@ -74,87 +124,16 @@ export default function PengaturanPage() {
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Konfirmasi password baru"
+                placeholder="Ulangi password baru"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                disabled={loading}
               />
             </div>
-            <Button className="w-full">Update Akun</Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Pengaturan Notifikasi */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Pengaturan Notifikasi</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="emailNotif">Notifikasi Email</Label>
-              <p className="text-sm text-gray-500">
-                Terima notifikasi via email untuk pengajuan baru
-              </p>
-            </div>
-            <Switch id="emailNotif" defaultChecked />
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="approvalNotif">Notifikasi Persetujuan</Label>
-              <p className="text-sm text-gray-500">
-                Terima notifikasi saat ada potensi yang disetujui
-              </p>
-            </div>
-            <Switch id="approvalNotif" defaultChecked />
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="weeklyReport">Laporan Mingguan</Label>
-              <p className="text-sm text-gray-500">
-                Kirim laporan mingguan via email
-              </p>
-            </div>
-            <Switch id="weeklyReport" />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Pengaturan Keamanan */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Pengaturan Keamanan</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="twoFactor">Autentikasi 2 Faktor</Label>
-              <p className="text-sm text-gray-500">
-                Aktifkan verifikasi 2 langkah untuk keamanan tambahan
-              </p>
-            </div>
-            <Switch id="twoFactor" />
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="sessionTimeout">Timeout Sesi</Label>
-              <p className="text-sm text-gray-500">
-                Otomatis logout setelah 30 menit tidak aktif
-              </p>
-            </div>
-            <Switch id="sessionTimeout" defaultChecked />
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="loginHistory">Riwayat Login</Label>
-              <p className="text-sm text-gray-500">
-                Catat riwayat login untuk monitoring keamanan
-              </p>
-            </div>
-            <Switch id="loginHistory" defaultChecked />
-          </div>
+            <Button className="w-full mt-2" type="submit" disabled={loading}>
+              {loading ? "Menyimpan..." : "Simpan Perubahan"}
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </div>
