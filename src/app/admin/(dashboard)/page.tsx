@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Store, Users, TrendingUp } from "lucide-react";
+import { Building2, Store, Users, TrendingUp, Mail } from "lucide-react";
 
 export const metadata = {
   title: "Dashboard Admin | Desa Binong",
@@ -111,6 +111,14 @@ export default async function AdminDashboard() {
     select: { title: true, createdAt: true },
   });
 
+  // Ambil statistik kontak
+  const totalKontak = await prisma.kontak.count();
+  const kontakTerbaru = await prisma.kontak.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 3,
+    select: { id: true, nama: true, subjek: true, createdAt: true },
+  });
+
   return (
     <div className="space-y-6">
       <div>
@@ -191,6 +199,19 @@ export default async function AdminDashboard() {
             </p>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pesan Kontak</CardTitle>
+            <Mail className="h-4 w-4 text-blue-700" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalKontak}</div>
+            <p className="text-xs text-muted-foreground">
+              Total pesan masuk dari form kontak
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -221,6 +242,21 @@ export default async function AdminDashboard() {
                   </div>
                   <span className="text-xs text-gray-500">
                     {item.createdAt.toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+              {/* Pesan Kontak Terbaru */}
+              {kontakTerbaru.map((k) => (
+                <div key={k.id} className="flex items-center space-x-4">
+                  <Mail className="w-4 h-4 text-blue-700" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">
+                      Pesan Baru dari {k.nama}
+                    </p>
+                    <p className="text-xs text-gray-500">Subjek: {k.subjek}</p>
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {formatTanggalIndo(k.createdAt)}
                   </span>
                 </div>
               ))}
