@@ -50,35 +50,32 @@ export default function AdminKontakList() {
               Belum ada pesan masuk.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full border text-sm">
-                <thead>
-                  <tr className="bg-blue-50">
-                    <th className="px-3 py-2 border">Nama</th>
-                    <th className="px-3 py-2 border">Email</th>
-                    <th className="px-3 py-2 border">Subjek</th>
-                    <th className="px-3 py-2 border">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.map((k) => (
-                    <tr key={k.id}>
-                      <td className="border px-2 py-1">{k.nama}</td>
-                      <td className="border px-2 py-1">{k.email}</td>
-                      <td className="border px-2 py-1">{k.subjek}</td>
-                      <td className="border px-2 py-1">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => router.push(`/admin/kontak/${k.id}`)}
-                        >
-                          Lihat Detail
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {data.map((k) => (
+                <div
+                  key={k.id}
+                  className="border rounded-lg p-4 flex flex-col bg-gray-50 h-full"
+                >
+                  <div className="flex-1 min-w-0 mb-4">
+                    <div className="font-semibold text-blue-900 text-base mb-1">
+                      {k.nama}
+                    </div>
+                    <div className="text-sm text-gray-700 truncate">
+                      {k.email}
+                    </div>
+                    <div className="text-sm text-gray-600 mt-1">
+                      Subjek: <span className="font-medium">{k.subjek}</span>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => router.push(`/admin/kontak/${k.id}`)}
+                  >
+                    Lihat Detail
+                  </Button>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>

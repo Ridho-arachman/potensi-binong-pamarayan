@@ -47,4 +47,6 @@ model Kontak{
   nomor String @db.VarChar(12)
   subjek String
   pesan String
+  createdAt   DateTime @default(now())
+  @@index([nama])
 }
