@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Store, Menu, X, Home, Settings, LogOut } from "lucide-react";
+import { Store, Menu, X, Home, Settings, LogOut, Mail } from "lucide-react";
 import { Button } from "../ui/button";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: Home },
   { name: "Kelola Potensi", href: "/admin/kelola", icon: Store },
+  { name: "Pesan Kontak", href: "/admin/kontak", icon: Mail },
   { name: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
 ];
 
