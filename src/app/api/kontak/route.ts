@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import type { Prisma } from "@/generated/prisma";
 
 export async function POST(req: Request) {
   try {
@@ -42,9 +43,27 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const data = await prisma.kontak.findMany({ orderBy: { id: "desc" } });
+    const { searchParams } = new URL(req.url);
+    const nama = searchParams.get("nama") || undefined;
+    const from = searchParams.get("from") || undefined;
+    const to = searchParams.get("to") || undefined;
+
+    const where: Prisma.KontakWhereInput = {};
+    if (nama) {
+      where.nama = { contains: nama, mode: "insensitive" };
+    }
+    if (from || to) {
+      where.createdAt = {};
+      if (from) where.createdAt.gte = new Date(from);
+      if (to) where.createdAt.lte = new Date(to);
+    }
+
+    const data = await prisma.kontak.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+    });
     return NextResponse.json({ data });
   } catch {
     return NextResponse.json(
