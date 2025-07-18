@@ -1,9 +1,11 @@
+"use client";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import type { Metadata } from "next";
+import { toast } from "sonner";
 import {
   Accordion,
   AccordionItem,
@@ -11,14 +13,93 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 
-export const metadata: Metadata = {
-  title: "Kontak Kami | Potensi Desa Binong",
-  description:
-    "Hubungi kami untuk informasi lebih lanjut tentang potensi Desa Binong, Pamarayan. Kami siap membantu Anda.",
-  keywords: "kontak Desa Binong, informasi Desa Binong, Pamarayan",
+type Kontak = {
+  id: string;
+  nama: string;
+  email: string;
+  nomor: string;
+  subjek: string;
+  pesan: string;
 };
 
 export default function KontakPage() {
+  const [form, setForm] = useState({
+    nama: "",
+    email: "",
+    nomor: "",
+    subjek: "",
+    pesan: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Kontak[]>([]);
+  const [fetching, setFetching] = useState(true);
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  }
+
+  async function fetchKontak() {
+    setFetching(true);
+    try {
+      const res = await fetch("/api/kontak", { cache: "no-store" });
+      if (!res.ok) throw new Error("Gagal mengambil data kontak");
+      const json = await res.json();
+      setData(json.data || []);
+    } catch {
+      setData([]);
+    } finally {
+      setFetching(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchKontak();
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // Validasi
+    if (
+      !form.nama ||
+      !form.email ||
+      !form.nomor ||
+      !form.subjek ||
+      !form.pesan
+    ) {
+      toast.error("Semua field wajib diisi.");
+      return;
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
+      toast.error("Format email tidak valid.");
+      return;
+    }
+    if (form.nomor.length > 12) {
+      toast.error("Nomor telepon maksimal 12 digit.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch("/api/kontak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Gagal mengirim pesan.");
+      toast.success("Pesan berhasil dikirim.");
+      setForm({ nama: "", email: "", nomor: "", subjek: "", pesan: "" });
+      fetchKontak();
+    } catch (err: unknown) {
+      const errorMsg =
+        err instanceof Error ? err.message : "Terjadi kesalahan.";
+      toast.error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <section className="container py-10 sm:py-16 md:py-20 px-4 sm:px-6">
       <div className="max-w-5xl mx-auto">
@@ -31,7 +112,6 @@ export default function KontakPage() {
             Binong. Silakan hubungi kami melalui form atau kontak di bawah ini.
           </p>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
           {/* Form Kontak */}
           <Card className="h-full flex flex-col justify-between shadow-md border-blue-100 p-6">
@@ -41,13 +121,19 @@ export default function KontakPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 gap-6">
                   <div className="flex flex-col">
                     <Label htmlFor="nama" className="mb-1">
                       Nama Lengkap
                     </Label>
-                    <Input id="nama" placeholder="Masukkan nama lengkap" />
+                    <Input
+                      id="nama"
+                      value={form.nama}
+                      onChange={handleChange}
+                      placeholder="Masukkan nama lengkap"
+                      disabled={loading}
+                    />
                   </div>
                   <div className="flex flex-col">
                     <Label htmlFor="email" className="mb-1">
@@ -56,22 +142,38 @@ export default function KontakPage() {
                     <Input
                       id="email"
                       type="email"
+                      value={form.email}
+                      onChange={handleChange}
                       placeholder="contoh@email.com"
+                      disabled={loading}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col">
-                    <Label htmlFor="telepon" className="mb-1">
+                    <Label htmlFor="nomor" className="mb-1">
                       Nomor Telepon
                     </Label>
-                    <Input id="telepon" placeholder="08123456789" />
+                    <Input
+                      id="nomor"
+                      value={form.nomor}
+                      onChange={handleChange}
+                      placeholder="08123456789"
+                      maxLength={12}
+                      disabled={loading}
+                    />
                   </div>
                   <div className="flex flex-col">
                     <Label htmlFor="subjek" className="mb-1">
                       Subjek
                     </Label>
-                    <Input id="subjek" placeholder="Subjek pesan" />
+                    <Input
+                      id="subjek"
+                      value={form.subjek}
+                      onChange={handleChange}
+                      placeholder="Subjek pesan"
+                      disabled={loading}
+                    />
                   </div>
                 </div>
                 <div className="flex flex-col">
@@ -80,22 +182,25 @@ export default function KontakPage() {
                   </Label>
                   <Textarea
                     id="pesan"
+                    value={form.pesan}
+                    onChange={handleChange}
                     placeholder="Tulis pesan Anda di sini..."
                     rows={5}
+                    disabled={loading}
                   />
                 </div>
                 <div className="pt-2 flex justify-end">
                   <Button
                     type="submit"
                     className="px-10 py-2 text-base font-semibold bg-blue-800 hover:bg-blue-900 text-white shadow"
+                    disabled={loading}
                   >
-                    Kirim Pesan
+                    {loading ? "Mengirim..." : "Kirim Pesan"}
                   </Button>
                 </div>
               </form>
             </CardContent>
           </Card>
-
           {/* Informasi Kontak */}
           <Card className="h-full flex flex-col justify-between shadow border-blue-100 p-6">
             <CardHeader>
@@ -148,7 +253,6 @@ export default function KontakPage() {
             </CardContent>
           </Card>
         </div>
-
         {/* FAQ Accordion di bawah form & info kontak */}
         <div className="mt-10">
           <Card className="shadow border-blue-100 p-6">
@@ -182,6 +286,44 @@ export default function KontakPage() {
               </Accordion>
             </CardContent>
           </Card>
+        </div>
+        {/* Daftar Pesan Masuk */}
+        <div className="mt-10">
+          <h2 className="text-lg font-bold mb-4">Pesan Masuk</h2>
+          {fetching ? (
+            <div className="text-center text-muted-foreground py-8">
+              Memuat data...
+            </div>
+          ) : !data.length ? (
+            <div className="text-center text-muted-foreground py-8">
+              Belum ada pesan masuk.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full border text-sm">
+                <thead>
+                  <tr className="bg-blue-50">
+                    <th className="px-3 py-2 border">Nama</th>
+                    <th className="px-3 py-2 border">Email</th>
+                    <th className="px-3 py-2 border">Nomor</th>
+                    <th className="px-3 py-2 border">Subjek</th>
+                    <th className="px-3 py-2 border">Pesan</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.map((k) => (
+                    <tr key={k.id}>
+                      <td className="border px-2 py-1">{k.nama}</td>
+                      <td className="border px-2 py-1">{k.email}</td>
+                      <td className="border px-2 py-1">{k.nomor}</td>
+                      <td className="border px-2 py-1">{k.subjek}</td>
+                      <td className="border px-2 py-1">{k.pesan}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </section>

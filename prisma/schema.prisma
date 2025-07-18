@@ -39,3 +39,12 @@ model PotensiImage {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model Kontak{
+  id String @id @default(cuid())
+  nama String 
+  email String @unique
+  nomor String @db.VarChar(12)
+  subjek String
+  pesan String
+}
