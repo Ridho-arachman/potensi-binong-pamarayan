@@ -32,6 +32,64 @@ export default async function HomePage() {
     take: 3,
   });
 
+  // Statistik dinamis
+  const totalUMKM = await prisma.potensi.count({ where: { category: "umkm" } });
+  const totalWisata = await prisma.potensi.count({
+    where: { category: "wisata" },
+  });
+  const totalBudaya = await prisma.potensi.count({
+    where: { category: "budaya" },
+  });
+  // Pengunjung tahun ini
+  const now = new Date();
+  const firstDayThisYear = new Date(now.getFullYear(), 0, 1);
+  const totalPengunjung = await prisma.visitor.count({
+    where: {
+      createdAt: {
+        gte: firstDayThisYear,
+        lte: now,
+      },
+    },
+  });
+  // Pertumbuhan potensi bulan ini
+  const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastDayLastMonth = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    0,
+    23,
+    59,
+    59,
+    999
+  );
+  const potensiThisMonth = await prisma.potensi.count({
+    where: {
+      createdAt: {
+        gte: firstDayThisMonth,
+        lte: now,
+      },
+    },
+  });
+  const potensiLastMonth = await prisma.potensi.count({
+    where: {
+      createdAt: {
+        gte: firstDayLastMonth,
+        lte: lastDayLastMonth,
+      },
+    },
+  });
+  let pertumbuhan = 0;
+  if (potensiLastMonth === 0 && potensiThisMonth > 0) {
+    pertumbuhan = 100;
+  } else if (potensiLastMonth === 0 && potensiThisMonth === 0) {
+    pertumbuhan = 0;
+  } else {
+    pertumbuhan = Math.round(
+      ((potensiThisMonth - potensiLastMonth) / potensiLastMonth) * 100
+    );
+  }
+
   return (
     <>
       {/* Hero Section */}
@@ -108,31 +166,45 @@ export default async function HomePage() {
         <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-4 sm:mb-6 text-center text-blue-900">
           Statistik Potensi Desa Binong Pamarayan
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-5xl mx-auto">
           <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
             <span className="text-4xl mb-3">🏪</span>
             <h3 className="font-bold text-blue-800 text-lg mb-1">UMKM</h3>
-            <p className="text-2xl font-bold text-blue-900 mb-1">12</p>
+            <p className="text-2xl font-bold text-blue-900 mb-1">{totalUMKM}</p>
             <span className="text-slate-500 text-sm">Total UMKM</span>
           </div>
           <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
             <span className="text-4xl mb-3">🌄</span>
             <h3 className="font-bold text-blue-800 text-lg mb-1">Wisata</h3>
-            <p className="text-2xl font-bold text-blue-900 mb-1">5</p>
+            <p className="text-2xl font-bold text-blue-900 mb-1">
+              {totalWisata}
+            </p>
             <span className="text-slate-500 text-sm">Total Wisata</span>
+          </div>
+          <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
+            <span className="text-4xl mb-3">🎭</span>
+            <h3 className="font-bold text-blue-800 text-lg mb-1">Budaya</h3>
+            <p className="text-2xl font-bold text-blue-900 mb-1">
+              {totalBudaya}
+            </p>
+            <span className="text-slate-500 text-sm">Total Budaya</span>
           </div>
           <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
             <span className="text-4xl mb-3">👥</span>
             <h3 className="font-bold text-blue-800 text-lg mb-1">Pengunjung</h3>
-            <p className="text-2xl font-bold text-blue-900 mb-1">1.200</p>
-            <span className="text-slate-500 text-sm">Pengunjung Tahun Ini</span>
+            <p className="text-2xl font-bold text-blue-900 mb-1">
+              {totalPengunjung}
+            </p>
+            <span className="text-slate-500 text-sm">Pengunjung Bulan Ini</span>
           </div>
           <div className="rounded-xl shadow border border-blue-100 bg-white p-6 flex flex-col items-center text-center">
             <span className="text-4xl mb-3">📈</span>
             <h3 className="font-bold text-blue-800 text-lg mb-1">
               Pertumbuhan
             </h3>
-            <p className="text-2xl font-bold text-green-600 mb-1">10%</p>
+            <p className="text-2xl font-bold text-green-600 mb-1">
+              {pertumbuhan}%
+            </p>
             <span className="text-slate-500 text-sm">Pertumbuhan Bulanan</span>
           </div>
         </div>
