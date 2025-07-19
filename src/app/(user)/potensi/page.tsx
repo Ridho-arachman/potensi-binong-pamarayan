@@ -36,39 +36,47 @@ export default async function PotensiListPage() {
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 sm:mb-8 text-center text-blue-900">
         Daftar Potensi Desa
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-        {potensiList.map((p) => (
-          <Card
-            key={p.id}
-            className="overflow-hidden hover:shadow-lg transition-shadow"
-          >
-            <div className="aspect-video bg-gray-200 relative">
-              {p.mainImage ? (
-                <Image
-                  src={p.mainImage}
-                  alt={p.title}
-                  width={100}
-                  height={100}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-                  📷
-                </div>
-              )}
-            </div>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">{p.title}</CardTitle>
-              <p className="text-sm text-blue-600 font-medium">{p.category}</p>
-            </CardHeader>
-            <CardContent>
-              <Button asChild variant="outline" className="w-full">
-                <Link href={`/potensi/${p.id}`}>Lihat Detail</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {potensiList.length === 0 ? (
+        <div className="text-center text-gray-500 py-20 text-lg font-medium">
+          Belum ada data potensi desa.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          {potensiList.map((p) => (
+            <Card
+              key={p.id}
+              className="overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="aspect-video bg-gray-200 relative">
+                {p.mainImage ? (
+                  <Image
+                    src={p.mainImage}
+                    alt={p.title}
+                    width={100}
+                    height={100}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                    📷
+                  </div>
+                )}
+              </div>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">{p.title}</CardTitle>
+                <p className="text-sm text-blue-600 font-medium">
+                  {p.category}
+                </p>
+              </CardHeader>
+              <CardContent>
+                <Button asChild variant="outline" className="w-full">
+                  <Link href={`/potensi/${p.id}`}>Lihat Detail</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
