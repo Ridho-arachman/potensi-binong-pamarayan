@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import VisitorTracker from "./VisitorTracker";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: {
@@ -81,7 +82,8 @@ export default function UserLayout({
     <>
       <Navbar />
       <VisitorTracker />
-      {children}
+      <main>{children}</main>
+      <Toaster />
       <Footer />
     </>
   );

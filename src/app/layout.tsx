@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { Inter, Playfair_Display } from "next/font/google";
 
@@ -14,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${inter.variable} ${playfair.variable}`}>
-      <body className="min-h-screen flex flex-col font-body">{children}</body>
+      <body className="min-h-screen flex flex-col font-body">
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }
