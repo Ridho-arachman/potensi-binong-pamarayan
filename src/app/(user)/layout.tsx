@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Inter, Playfair_Display } from "next/font/google";
+import VisitorTracker from "./VisitorTracker";
 
 export const metadata: Metadata = {
   title: {
@@ -72,24 +72,17 @@ export const metadata: Metadata = {
   },
 };
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-body" });
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-heading",
-});
-
-export default function RootLayout({
+export default function UserLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="id" className={`${inter.variable} ${playfair.variable}`}>
-      <body className="min-h-screen flex flex-col font-body">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
-    </html>
+    <>
+      <Navbar />
+      <VisitorTracker />
+      {children}
+      <Footer />
+    </>
   );
 }

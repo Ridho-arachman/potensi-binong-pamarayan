@@ -50,12 +50,19 @@ export default async function AdminDashboard() {
     count: k._count.category,
   }));
 
-  // Contoh: pengunjung dan pertumbuhan bisa diisi manual/dari tabel lain jika ada
-  const totalPengunjung = 1234; // Ganti dengan query jika ada tabel pengunjung
-
-  // Hitung pertumbuhan potensi bulan ini vs bulan lalu
+  // Hitung pengunjung bulan ini
   const now = new Date();
   const firstDayThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const totalPengunjung = await prisma.visitor.count({
+    where: {
+      createdAt: {
+        gte: firstDayThisMonth,
+        lte: now,
+      },
+    },
+  });
+
+  // Hitung pertumbuhan potensi bulan ini vs bulan lalu
   const firstDayLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const lastDayLastMonth = new Date(
     now.getFullYear(),
@@ -195,7 +202,7 @@ export default async function AdminDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{totalPengunjung}</div>
             <p className="text-xs text-muted-foreground">
-              +12% dari bulan lalu
+              Total pengunjung bulan ini
             </p>
           </CardContent>
         </Card>

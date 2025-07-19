@@ -50,3 +50,12 @@ model Kontak{
   createdAt   DateTime @default(now())
   @@index([nama])
 }
+
+model Visitor {
+  id        String   @id @default(cuid())
+  ipAddress String?
+  userAgent String?
+  page      String?
+  createdAt DateTime @default(now())
+  @@index([createdAt])
+}
