@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,15 +13,6 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 
-type Kontak = {
-  id: string;
-  nama: string;
-  email: string;
-  nomor: string;
-  subjek: string;
-  pesan: string;
-};
-
 export default function KontakPage() {
   const [form, setForm] = useState({
     nama: "",
@@ -31,32 +22,12 @@ export default function KontakPage() {
     pesan: "",
   });
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<Kontak[]>([]);
-  const [fetching, setFetching] = useState(true);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   }
-
-  async function fetchKontak() {
-    setFetching(true);
-    try {
-      const res = await fetch("/api/kontak", { cache: "no-store" });
-      if (!res.ok) throw new Error("Gagal mengambil data kontak");
-      const json = await res.json();
-      setData(json.data || []);
-    } catch {
-      setData([]);
-    } finally {
-      setFetching(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchKontak();
-  }, []);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -90,7 +61,6 @@ export default function KontakPage() {
       if (!res.ok) throw new Error(data.message || "Gagal mengirim pesan.");
       toast.success("Pesan berhasil dikirim.");
       setForm({ nama: "", email: "", nomor: "", subjek: "", pesan: "" });
-      fetchKontak();
     } catch (err: unknown) {
       const errorMsg =
         err instanceof Error ? err.message : "Terjadi kesalahan.";
@@ -286,44 +256,6 @@ export default function KontakPage() {
               </Accordion>
             </CardContent>
           </Card>
-        </div>
-        {/* Daftar Pesan Masuk */}
-        <div className="mt-10">
-          <h2 className="text-lg font-bold mb-4">Pesan Masuk</h2>
-          {fetching ? (
-            <div className="text-center text-muted-foreground py-8">
-              Memuat data...
-            </div>
-          ) : !data.length ? (
-            <div className="text-center text-muted-foreground py-8">
-              Belum ada pesan masuk.
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full border text-sm">
-                <thead>
-                  <tr className="bg-blue-50">
-                    <th className="px-3 py-2 border">Nama</th>
-                    <th className="px-3 py-2 border">Email</th>
-                    <th className="px-3 py-2 border">Nomor</th>
-                    <th className="px-3 py-2 border">Subjek</th>
-                    <th className="px-3 py-2 border">Pesan</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.map((k) => (
-                    <tr key={k.id}>
-                      <td className="border px-2 py-1">{k.nama}</td>
-                      <td className="border px-2 py-1">{k.email}</td>
-                      <td className="border px-2 py-1">{k.nomor}</td>
-                      <td className="border px-2 py-1">{k.subjek}</td>
-                      <td className="border px-2 py-1">{k.pesan}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
         </div>
       </div>
     </section>
