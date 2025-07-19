@@ -37,7 +37,7 @@ export default async function PotensiListPage() {
         Daftar Potensi Desa
       </h1>
       {potensiList.length === 0 ? (
-        <div className="text-center text-gray-500 py-20 text-lg font-medium">
+        <div className="text-center text-gray-500  text-lg font-medium min-h-[50vh] flex items-center justify-center">
           Belum ada data potensi desa.
         </div>
       ) : (
