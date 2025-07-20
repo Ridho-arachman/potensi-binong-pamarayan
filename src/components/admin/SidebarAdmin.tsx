@@ -31,13 +31,19 @@ export default function SidebarAdmin() {
       {/* Mobile sidebar */}
       <div className={`lg:hidden ${sidebarOpen ? "block" : "hidden"}`}>
         <div className="fixed inset-0 z-50">
+          {sidebarOpen && (
+            <div
+              className="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity duration-300"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
           <div
-            className="fixed inset-0 bg-gray-600 bg-opacity-75"
-            onClick={() => setSidebarOpen(false)}
-          />
-          <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
+            className={`fixed inset-y-0 left-0 flex w-64 max-w-full flex-col bg-white shadow-lg transform transition-transform duration-300 ${
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
+          >
             <div className="flex h-16 items-center justify-between px-4">
-              <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
+              <h1 className="text-lg font-bold text-gray-900">Admin Panel</h1>
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -47,7 +53,6 @@ export default function SidebarAdmin() {
             </div>
             <nav className="flex-1 space-y-1 px-2 py-4">
               {navigation.map((item) => {
-                // Cek jika pathname adalah '/admin/kelola' atau '/admin/ajukan' dan item.href adalah '/admin/kelola'
                 const isActive =
                   (item.href === "/admin/kelola" &&
                     (pathname === "/admin/kelola" ||
@@ -65,6 +70,7 @@ export default function SidebarAdmin() {
                         ? "bg-blue-100 text-blue-900"
                         : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                     }`}
+                    style={{ fontSize: "15px" }}
                   >
                     <item.icon className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
                     {item.name}
@@ -76,6 +82,7 @@ export default function SidebarAdmin() {
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md"
+                style={{ fontSize: "15px" }}
               >
                 <LogOut className="mr-3 h-5 w-5" />
                 Keluar
@@ -93,7 +100,6 @@ export default function SidebarAdmin() {
           </div>
           <nav className="flex-1 space-y-1 px-2 py-4">
             {navigation.map((item) => {
-              // Cek jika pathname adalah '/admin/kelola', '/admin/ajukan', atau '/admin/kelola/[id]' dan item.href adalah '/admin/kelola'
               const isActive =
                 (item.href === "/admin/kelola" &&
                   (pathname === "/admin/kelola" ||
@@ -109,6 +115,7 @@ export default function SidebarAdmin() {
                       ? "bg-blue-100 text-blue-900"
                       : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                   }`}
+                  style={{ fontSize: "15px" }}
                 >
                   <item.icon className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
                   {item.name}
@@ -121,6 +128,7 @@ export default function SidebarAdmin() {
               onClick={handleLogout}
               variant="destructive"
               className="w-full flex cursor-pointer items-center px-2 py-2 text-sm font-medium text-white hover:bg-gray-200 hover:text-gray-900 rounded-md"
+              style={{ fontSize: "15px" }}
             >
               <LogOut className="mr-3 h-5 w-5" />
               Keluar
