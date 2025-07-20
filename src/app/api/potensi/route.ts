@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { supabase } from "@/lib/supabase";
 
 export async function GET() {
   const data = await prisma.potensi.findMany({
@@ -19,20 +18,28 @@ export async function POST(req: NextRequest) {
   const contact = form.get("contact") as string;
   const files = form.getAll("images") as File[];
 
-  // Pastikan folder uploads ada
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadDir, { recursive: true });
-
-  // Simpan file gambar ke public/uploads
+  // Upload file gambar ke Supabase Storage
   const imageUrls: string[] = [];
   for (const file of files) {
     if (!file || typeof file === "string") continue;
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${file.name.replace(/\s/g, "-")}`;
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-    imageUrls.push(`/uploads/${filename}`);
+    const fileName = `${Date.now()}-${file.name.replace(/\s/g, "-")}`;
+    const uploadResult = await supabase.storage
+      .from("potensi-images")
+      .upload(fileName, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+    if (uploadResult.error) {
+      return NextResponse.json(
+        {
+          error: "Gagal upload gambar ke storage",
+          detail: uploadResult.error.message,
+        },
+        { status: 500 }
+      );
+    }
+    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/potensi-images/${fileName}`;
+    imageUrls.push(imageUrl);
   }
 
   // Buat Potensi dan relasi gambar
