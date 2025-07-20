@@ -132,13 +132,13 @@ export default function TentangPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-blue-600 mb-2">
-                    2,500
+                    4,322
                   </div>
                   <div className="text-gray-600">Jumlah Penduduk</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600 mb-2">
-                    650
+                    1,292
                   </div>
                   <div className="text-gray-600">Jumlah KK</div>
                 </div>
@@ -195,23 +195,35 @@ export default function TentangPage() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
                   <span className="font-medium">Kepala Desa</span>
-                  <span className="text-gray-600">Ahmad Supriadi, S.Pd</span>
+                  <span className="text-gray-600">Iyat Suryati</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
                   <span className="font-medium">Sekretaris Desa</span>
-                  <span className="text-gray-600">Siti Nurhaliza, S.E</span>
+                  <span className="text-gray-600">Ali Musa, SE.</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
                   <span className="font-medium">Kasi Pemerintahan</span>
-                  <span className="text-gray-600">Budi Santoso</span>
+                  <span className="text-gray-600">ATIB</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
                   <span className="font-medium">Kasi Kesejahteraan</span>
-                  <span className="text-gray-600">Dewi Sartika</span>
+                  <span className="text-gray-600">BAINUDIN</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
                   <span className="font-medium">Kasi Pelayanan</span>
-                  <span className="text-gray-600">Rudi Hermawan</span>
+                  <span className="text-gray-600">JUANDA</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <span className="font-medium">Kajur Keuangan</span>
+                  <span className="text-gray-600">OMAN</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <span className="font-medium">Kajur Perencanaan</span>
+                  <span className="text-gray-600">AJAT SUDRAJAT</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <span className="font-medium">Kajur Umum</span>
+                  <span className="text-gray-600">MOHAMMAD RIDWAN, S.PD.I</span>
                 </div>
               </div>
             </CardContent>
