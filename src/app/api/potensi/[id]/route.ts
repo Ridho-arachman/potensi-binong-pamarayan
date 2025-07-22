@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { writeFile, mkdir, unlink } from "fs/promises";
-import path from "path";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(
   req: NextRequest,
@@ -37,34 +36,40 @@ export async function PATCH(
   });
   if (!old) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Hapus gambar yang tidak ada di existingImageIds
+  // Hapus gambar yang tidak ada di existingImageIds dari Supabase Storage dan database
   const toDelete = old.images.filter(
     (img) => !existingImageIds.includes(img.id)
   );
   for (const img of toDelete) {
-    const filePath = path.join(
-      process.cwd(),
-      "public",
-      img.url.replace("/uploads", "uploads")
-    );
-    try {
-      await unlink(filePath);
-    } catch {}
+    // Hapus dari Supabase Storage
+    const urlParts = img.url.split("/");
+    const fileName = urlParts[urlParts.length - 1];
+    await supabase.storage.from("potensi-images").remove([fileName]);
     await prisma.potensiImage.delete({ where: { id: img.id } });
   }
 
-  // Upload gambar baru
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(uploadDir, { recursive: true });
+  // Upload gambar baru ke Supabase Storage
   const imageUrls: string[] = [];
   for (const file of files) {
     if (!file || typeof file === "string") continue;
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filename = `${Date.now()}-${file.name.replace(/\s/g, "-")}`;
-    const filepath = path.join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-    imageUrls.push(`/uploads/${filename}`);
+    const fileName = `${Date.now()}-${file.name.replace(/\s/g, "-")}`;
+    const uploadResult = await supabase.storage
+      .from("potensi-images")
+      .upload(fileName, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+    if (uploadResult.error) {
+      return NextResponse.json(
+        {
+          error: "Gagal upload gambar ke storage",
+          detail: uploadResult.error.message,
+        },
+        { status: 500 }
+      );
+    }
+    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/potensi-images/${fileName}`;
+    imageUrls.push(imageUrl);
   }
 
   // Update potensi
@@ -95,21 +100,17 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Hapus gambar dari storage
+    // Hapus gambar dari Supabase Storage dan database
     const potensi = await prisma.potensi.findUnique({
       where: { id: params.id },
       include: { images: true },
     });
     if (potensi) {
       for (const img of potensi.images) {
-        const filePath = path.join(
-          process.cwd(),
-          "public",
-          img.url.replace("/uploads", "uploads")
-        );
-        try {
-          await unlink(filePath);
-        } catch {}
+        // Hapus dari Supabase Storage
+        const urlParts = img.url.split("/");
+        const fileName = urlParts[urlParts.length - 1];
+        await supabase.storage.from("potensi-images").remove([fileName]);
       }
     }
     await prisma.potensi.delete({ where: { id: params.id } });
