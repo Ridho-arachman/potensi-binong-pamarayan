@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "npx tsx ./scripts/create-admin.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.12.0",
