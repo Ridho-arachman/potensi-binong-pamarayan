@@ -1,37 +1,67 @@
 "use client";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import React, { useEffect, useState } from "react";
 
 interface ChartStatistikProps {
-  data: { label: string; value: number }[];
+  type: string;
   title: string;
-  color?: string;
+  color: string;
   unit?: string;
 }
 
-export default function ChartStatistik({
-  data,
+interface ChartData {
+  label: string;
+  value: number;
+}
+
+const ChartStatistik: React.FC<ChartStatistikProps> = ({
+  type,
   title,
-  color = "#2563eb",
+  color,
   unit,
-}: ChartStatistikProps) {
+}) => {
+  const [data, setData] = useState<ChartData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/statistik?type=${type}`)
+      .then((res) => res.json())
+      .then((d) => {
+        setData(d.data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [type]);
+
   return (
-    <div className="w-full h-72 bg-white rounded-xl shadow border border-blue-100 p-4 mb-8">
-      <h4 className="font-semibold mb-2 text-blue-900 text-center">{title}</h4>
-      <ResponsiveContainer width="100%" height="90%">
-        <BarChart data={data}>
-          <XAxis dataKey="label" tick={{ fontSize: 12 }} />
-          <YAxis allowDecimals={false} tick={{ fontSize: 12 }} unit={unit} />
-          <Tooltip />
-          <Bar dataKey="value" fill={color} radius={[4, 4, 0, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="bg-white rounded-lg shadow p-4">
+      <h3 className="font-semibold mb-2">{title}</h3>
+      {loading ? (
+        <div className="text-center text-gray-400">Loading...</div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {data.map((item) => (
+            <div key={item.label} className="flex items-center gap-2">
+              <span className="w-16 text-xs">{item.label}</span>
+              <div className="flex-1 bg-gray-200 rounded h-2">
+                <div
+                  className="h-2 rounded"
+                  style={{
+                    width: `${item.value}${unit ? unit : "%"}`,
+                    background: color,
+                  }}
+                ></div>
+              </div>
+              <span className="w-8 text-xs text-right">
+                {item.value}
+                {unit}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default ChartStatistik;

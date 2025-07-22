@@ -128,97 +128,97 @@ export default async function AdminDashboard() {
   });
 
   // Data chart pengunjung 12 bulan terakhir
-  const chartData: { bulan: string; jumlah: number }[] = [];
-  for (let i = 11; i >= 0; i--) {
-    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-    const jumlah = await prisma.visitor.count({
-      where: {
-        createdAt: {
-          gte: date,
-          lt: nextMonth,
-        },
-      },
-    });
-    const bulan = date.toLocaleString("id-ID", {
-      month: "short",
-      year: "2-digit",
-    });
-    chartData.push({ bulan, jumlah });
-  }
+  // const chartData: { bulan: string; jumlah: number }[] = [];
+  // for (let i = 11; i >= 0; i--) {
+  //   const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+  //   const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+  //   const jumlah = await prisma.visitor.count({
+  //     where: {
+  //       createdAt: {
+  //         gte: date,
+  //         lt: nextMonth,
+  //       },
+  //     },
+  //   });
+  //   const bulan = date.toLocaleString("id-ID", {
+  //     month: "short",
+  //     year: "2-digit",
+  //   });
+  //   chartData.push({ bulan, jumlah });
+  // }
 
   // Data chart statistik 12 bulan terakhir
-  const chartStat = async (category?: string) => {
-    const arr: { label: string; value: number }[] = [];
-    for (let i = 11; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-      let value = 0;
-      if (category === "visitor") {
-        value = await prisma.visitor.count({
-          where: {
-            createdAt: {
-              gte: date,
-              lt: nextMonth,
-            },
-          },
-        });
-      } else if (category) {
-        value = await prisma.potensi.count({
-          where: {
-            category,
-            createdAt: {
-              gte: date,
-              lt: nextMonth,
-            },
-          },
-        });
-      } else if (category === "pertumbuhan") {
-        // skip, handled below
-      }
-      const label = date.toLocaleString("id-ID", {
-        month: "short",
-        year: "2-digit",
-      });
-      arr.push({ label, value });
-    }
-    return arr;
-  };
-  const chartUMKM = await chartStat("umkm");
-  const chartWisata = await chartStat("wisata");
-  const chartBudaya = await chartStat("budaya");
-  const chartVisitor = await chartStat("visitor");
-  // Pertumbuhan: hitung persentase pertumbuhan potensi per bulan
-  const chartPertumbuhan: { label: string; value: number }[] = [];
-  for (let i = 11; i >= 0; i--) {
-    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-    const prevMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
-    const endPrevMonth = new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      0,
-      23,
-      59,
-      59,
-      999
-    );
-    const thisMonth = await prisma.potensi.count({
-      where: { createdAt: { gte: date, lt: nextMonth } },
-    });
-    const lastMonth = await prisma.potensi.count({
-      where: { createdAt: { gte: prevMonth, lte: endPrevMonth } },
-    });
-    let value = 0;
-    if (lastMonth === 0 && thisMonth > 0) value = 100;
-    else if (lastMonth === 0 && thisMonth === 0) value = 0;
-    else value = Math.round(((thisMonth - lastMonth) / lastMonth) * 100);
-    const label = date.toLocaleString("id-ID", {
-      month: "short",
-      year: "2-digit",
-    });
-    chartPertumbuhan.push({ label, value });
-  }
+  // const chartStat = async (category?: string) => {
+  //   const arr: { label: string; value: number }[] = [];
+  //   for (let i = 11; i >= 0; i--) {
+  //     const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+  //     const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+  //     let value = 0;
+  //     if (category === "visitor") {
+  //       value = await prisma.visitor.count({
+  //         where: {
+  //           createdAt: {
+  //             gte: date,
+  //             lt: nextMonth,
+  //           },
+  //         },
+  //       });
+  //     } else if (category) {
+  //       value = await prisma.potensi.count({
+  //         where: {
+  //           category,
+  //           createdAt: {
+  //             gte: date,
+  //             lt: nextMonth,
+  //           },
+  //         },
+  //       });
+  //     } else if (category === "pertumbuhan") {
+  //       // skip, handled below
+  //     }
+  //     const label = date.toLocaleString("id-ID", {
+  //       month: "short",
+  //       year: "2-digit",
+  //     });
+  //     arr.push({ label, value });
+  //   }
+  //   return arr;
+  // };
+  // const chartUMKM = await chartStat("umkm");
+  // const chartWisata = await chartStat("wisata");
+  // const chartBudaya = await chartStat("budaya");
+  // const chartVisitor = await chartStat("visitor");
+  // // Pertumbuhan: hitung persentase pertumbuhan potensi per bulan
+  // const chartPertumbuhan: { label: string; value: number }[] = [];
+  // for (let i = 11; i >= 0; i--) {
+  //   const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+  //   const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+  //   const prevMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+  //   const endPrevMonth = new Date(
+  //     date.getFullYear(),
+  //     date.getMonth(),
+  //     0,
+  //     23,
+  //     59,
+  //     59,
+  //     999
+  //   );
+  //   const thisMonth = await prisma.potensi.count({
+  //     where: { createdAt: { gte: date, lt: nextMonth } },
+  //   });
+  //   const lastMonth = await prisma.potensi.count({
+  //     where: { createdAt: { gte: prevMonth, lte: endPrevMonth } },
+  //   });
+  //   let value = 0;
+  //   if (lastMonth === 0 && thisMonth > 0) value = 100;
+  //   else if (lastMonth === 0 && thisMonth === 0) value = 0;
+  //   else value = Math.round(((thisMonth - lastMonth) / lastMonth) * 100);
+  //   const label = date.toLocaleString("id-ID", {
+  //     month: "short",
+  //     year: "2-digit",
+  //   });
+  //   chartPertumbuhan.push({ label, value });
+  // }
 
   return (
     <div className="space-y-6 pt-14 lg:pt-0">
@@ -400,27 +400,27 @@ export default async function AdminDashboard() {
       {/* Chart Statistik */}
       <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
         <ChartStatistik
-          data={chartUMKM}
+          type="umkm"
           title="Grafik UMKM 12 Bulan Terakhir"
           color="#22c55e"
         />
         <ChartStatistik
-          data={chartWisata}
+          type="wisata"
           title="Grafik Wisata 12 Bulan Terakhir"
           color="#2563eb"
         />
         <ChartStatistik
-          data={chartBudaya}
+          type="budaya"
           title="Grafik Budaya 12 Bulan Terakhir"
           color="#eab308"
         />
         <ChartStatistik
-          data={chartVisitor}
+          type="visitor"
           title="Grafik Pengunjung 12 Bulan Terakhir"
           color="#6366f1"
         />
         <ChartStatistik
-          data={chartPertumbuhan}
+          type="pertumbuhan"
           title="Grafik Pertumbuhan Potensi (%)"
           color="#16a34a"
           unit="%"
