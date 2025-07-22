@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import { registerAdminSchema } from "@/lib/zod";
 
 export async function POST(req: NextRequest) {
-  const { name, email, password } = await req.json();
-  if (!name || !email || !password) {
+  const body = await req.json();
+  const result = registerAdminSchema.safeParse(body);
+  if (!result.success) {
     return NextResponse.json(
-      { error: "Semua field wajib diisi." },
+      { error: result.error.errors[0]?.message || "Data tidak valid." },
       { status: 400 }
     );
   }
+  const { name, email, password } = result.data;
 
   // Cek apakah email sudah terdaftar
   const existing = await prisma.user.findUnique({ where: { email } });

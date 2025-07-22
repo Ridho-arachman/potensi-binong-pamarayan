@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { supabase } from "@/lib/supabase";
+import { potensiSchema } from "@/lib/zod";
 
 export async function GET() {
   const data = await prisma.potensi.findMany({
@@ -17,6 +18,20 @@ export async function POST(req: NextRequest) {
   const description = form.get("description") as string;
   const contact = form.get("contact") as string;
   const files = form.getAll("images") as File[];
+
+  // Validasi Zod
+  const result = potensiSchema.safeParse({
+    title,
+    category,
+    description,
+    contact,
+  });
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error.errors[0]?.message || "Data tidak valid." },
+      { status: 400 }
+    );
+  }
 
   // Upload file gambar ke Supabase Storage
   const imageUrls: string[] = [];

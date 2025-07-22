@@ -2,25 +2,33 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { registerAdminSchema } from "@/lib/zod";
 
 export default function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
-  async function handleRegister(e) {
+  async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setSuccess("");
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
+    const values = {
+      name: formData.get("name")?.toString() || "",
+      email: formData.get("email")?.toString() || "",
+      password: formData.get("password")?.toString() || "",
+    };
+    // Validasi Zod
+    const result = registerAdminSchema.safeParse(values);
+    if (!result.success) {
+      setError(result.error.errors[0]?.message || "Data tidak valid.");
+      return;
+    }
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.get("name"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
+      body: JSON.stringify(values),
     });
     if (!res.ok) {
       const data = await res.json();

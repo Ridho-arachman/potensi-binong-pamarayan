@@ -1,23 +1,29 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { loginAdminSchema } from "@/lib/zod";
 
 export default function AdminLoginPage() {
   const [error, setError] = useState("");
-  const router = useRouter();
 
-  async function handleLogin(e) {
+  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
+    const values = {
+      email: formData.get("email")?.toString() || "",
+      password: formData.get("password")?.toString() || "",
+    };
+    // Validasi Zod
+    const result = loginAdminSchema.safeParse(values);
+    if (!result.success) {
+      setError(result.error.errors[0]?.message || "Data tidak valid.");
+      return;
+    }
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
+      body: JSON.stringify(values),
       credentials: "include",
     });
     if (!res.ok) {

@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import { kontakSchema } from "@/lib/zod";
 
 export default function KontakPage() {
   const [form, setForm] = useState({
@@ -22,32 +23,23 @@ export default function KontakPage() {
     pesan: "",
   });
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
     setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    setFormError(null);
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // Validasi
-    if (
-      !form.nama ||
-      !form.email ||
-      !form.nomor ||
-      !form.subjek ||
-      !form.pesan
-    ) {
-      toast.error("Semua field wajib diisi.");
-      return;
-    }
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
-      toast.error("Format email tidak valid.");
-      return;
-    }
-    if (form.nomor.length > 12) {
-      toast.error("Nomor telepon maksimal 12 digit.");
+    // Validasi Zod
+    const result = kontakSchema.safeParse(form);
+    if (!result.success) {
+      const firstError = result.error.errors[0]?.message || "Data tidak valid.";
+      setFormError(firstError);
+      toast.error(firstError);
       return;
     }
     setLoading(true);
@@ -61,9 +53,11 @@ export default function KontakPage() {
       if (!res.ok) throw new Error(data.message || "Gagal mengirim pesan.");
       toast.success("Pesan berhasil dikirim.");
       setForm({ nama: "", email: "", nomor: "", subjek: "", pesan: "" });
+      setFormError(null);
     } catch (err: unknown) {
       const errorMsg =
         err instanceof Error ? err.message : "Terjadi kesalahan.";
+      setFormError(errorMsg);
       toast.error(errorMsg);
     } finally {
       setLoading(false);
@@ -92,6 +86,9 @@ export default function KontakPage() {
             </CardHeader>
             <CardContent>
               <form className="space-y-6" onSubmit={handleSubmit}>
+                {formError && (
+                  <div className="text-red-500 text-sm mb-2">{formError}</div>
+                )}
                 <div className="grid grid-cols-1 gap-6">
                   <div className="flex flex-col">
                     <Label htmlFor="nama" className="mb-1">

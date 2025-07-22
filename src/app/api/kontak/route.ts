@@ -1,26 +1,19 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import type { Prisma } from "@/generated/prisma";
+import { kontakSchema } from "@/lib/zod";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { nama, email, nomor, subjek, pesan } = body;
-
-    if (!nama || !email || !nomor || !subjek || !pesan) {
+    const result = kontakSchema.safeParse(body);
+    if (!result.success) {
       return NextResponse.json(
-        { message: "Semua field wajib diisi." },
+        { message: result.error.errors[0]?.message || "Data tidak valid." },
         { status: 400 }
       );
     }
-
-    // Validasi nomor (maksimal 12 digit)
-    if (nomor.length > 12) {
-      return NextResponse.json(
-        { message: "Nomor telepon maksimal 12 digit." },
-        { status: 400 }
-      );
-    }
+    const { nama, email, nomor, subjek, pesan } = result.data;
 
     // Validasi email unik
     const existing = await prisma.kontak.findUnique({ where: { email } });

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import Image from "next/image";
+import { potensiSchema } from "@/lib/zod";
 
 export default function EditPotensiPage() {
   const router = useRouter();
@@ -30,6 +31,7 @@ export default function EditPotensiPage() {
     images: [] as File[],
     existingImages: [] as { id: string; url: string }[],
   });
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,10 +69,12 @@ export default function EditPotensiPage() {
     } else {
       setForm((prev) => ({ ...prev, [id]: value }));
     }
+    setFormError(null);
   };
 
   const handleCategory = (value: string) => {
     setForm((prev) => ({ ...prev, category: value }));
+    setFormError(null);
   };
 
   const handleRemoveImage = (imgId: string) => {
@@ -82,8 +86,17 @@ export default function EditPotensiPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.category || !form.description) {
-      toast("Gagal", { description: "Semua field wajib diisi!" });
+    // Validasi Zod
+    const result = potensiSchema.safeParse({
+      title: form.title,
+      category: form.category,
+      description: form.description,
+      contact: form.contact,
+    });
+    if (!result.success) {
+      const firstError = result.error.errors[0]?.message || "Data tidak valid.";
+      setFormError(firstError);
+      toast("Gagal", { description: firstError });
       return;
     }
     setIsPending(true);
@@ -122,6 +135,9 @@ export default function EditPotensiPage() {
         </CardHeader>
         <CardContent>
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {formError && (
+              <div className="text-red-500 text-sm mb-2">{formError}</div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="title">Judul Potensi</Label>

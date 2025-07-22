@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { profileSchema } from "@/lib/zod";
 
 export default function PengaturanPage() {
   const [form, setForm] = useState({
@@ -15,6 +16,7 @@ export default function PengaturanPage() {
     confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchProfile() {
@@ -35,16 +37,17 @@ export default function PengaturanPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setForm((prev) => ({ ...prev, [id]: value }));
+    setFormError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email) {
-      toast("Gagal", { description: "Nama dan email wajib diisi!" });
-      return;
-    }
-    if (form.newPassword && form.newPassword !== form.confirmPassword) {
-      toast("Gagal", { description: "Konfirmasi password tidak cocok!" });
+    // Validasi Zod
+    const result = profileSchema.safeParse(form);
+    if (!result.success) {
+      const firstError = result.error.errors[0]?.message || "Data tidak valid.";
+      setFormError(firstError);
+      toast("Gagal", { description: firstError });
       return;
     }
     setLoading(true);
@@ -89,6 +92,9 @@ export default function PengaturanPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           <form className="space-y-4" onSubmit={handleSubmit}>
+            {formError && (
+              <div className="text-red-500 text-sm mb-2">{formError}</div>
+            )}
             <div>
               <Label htmlFor="name">Username</Label>
               <Input

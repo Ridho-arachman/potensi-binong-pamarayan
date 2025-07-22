@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { potensiSchema } from "@/lib/zod";
 
 export default function AjukanPotensiPage() {
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,7 @@ export default function AjukanPotensiPage() {
     contact: "",
     images: [] as File[],
   });
+  const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleChange = (
@@ -40,16 +42,27 @@ export default function AjukanPotensiPage() {
     } else if (id !== "location") {
       setForm((prev) => ({ ...prev, [id]: value }));
     }
+    setFormError(null);
   };
 
   const handleCategory = (value: string) => {
     setForm((prev) => ({ ...prev, category: value }));
+    setFormError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.category || !form.description || !form.contact) {
-      toast("Gagal", { description: "Semua field wajib diisi!" });
+    // Validasi Zod
+    const result = potensiSchema.safeParse({
+      title: form.title,
+      category: form.category,
+      description: form.description,
+      contact: form.contact,
+    });
+    if (!result.success) {
+      const firstError = result.error.errors[0]?.message || "Data tidak valid.";
+      setFormError(firstError);
+      toast("Gagal", { description: firstError });
       return;
     }
     setLoading(true);
@@ -91,6 +104,9 @@ export default function AjukanPotensiPage() {
         </CardHeader>
         <CardContent>
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {formError && (
+              <div className="text-red-500 text-sm mb-2">{formError}</div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <Label htmlFor="title">Judul Potensi</Label>

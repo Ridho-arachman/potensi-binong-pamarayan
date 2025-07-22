@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { supabase } from "@/lib/supabase";
+import { potensiSchema } from "@/lib/zod";
 
 export async function GET(
   req: NextRequest,
@@ -28,6 +29,20 @@ export async function PATCH(
   const existingImageIds = JSON.parse(
     (form.get("existingImageIds") as string) || "[]"
   );
+
+  // Validasi Zod
+  const result = potensiSchema.safeParse({
+    title,
+    category,
+    description,
+    contact,
+  });
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error.errors[0]?.message || "Data tidak valid." },
+      { status: 400 }
+    );
+  }
 
   // Ambil data lama
   const old = await prisma.potensi.findUnique({
