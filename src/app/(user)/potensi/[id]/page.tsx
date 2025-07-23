@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import Image from "next/image";
 
-type Props = { params: { id: string } };
-
-export default async function PotensiDetailPage({ params }: Props) {
+export default async function PotensiDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const potensi = await prisma.potensi.findUnique({
     where: { id: params.id },
     select: {
