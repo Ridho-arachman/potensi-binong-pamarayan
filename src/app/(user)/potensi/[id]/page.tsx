@@ -1,6 +1,6 @@
 import PotensiDetailClient from "@/components/PotensiDetailClient";
 
-export async function PotensiDetailPage({
+export default async function PotensiDetailPage({
   params,
 }: {
   params: { id: string };
