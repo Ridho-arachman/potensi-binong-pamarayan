@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default async function PotensiDetailPage({ params }: Props) {
-  const { id } = params;
+  const { id } = await params;
 
   return (
     <section className="container py-8 sm:py-12 md:py-14 px-4 sm:px-6">
