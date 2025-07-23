@@ -3,13 +3,48 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
   const baseUrl = "https://web-potensi-desa-binong-pamarayan.vercel.app";
+  const now = new Date().toISOString();
 
   // Ambil semua id potensi dari database
-  const potensi = await prisma.potensi.findMany({ select: { id: true } });
+  const potensi = await prisma.potensi.findMany({
+    select: { id: true, updatedAt: true },
+  });
 
-  const staticUrls = ["", "/potensi", "/tentang", "/kontak"];
+  // Daftar URL statis beserta properti sitemap
+  const staticUrls = [
+    {
+      loc: "",
+      lastmod: now,
+      changefreq: "yearly",
+      priority: 1,
+    },
+    {
+      loc: "/potensi",
+      lastmod: now,
+      changefreq: "monthly",
+      priority: 0.8,
+    },
+    {
+      loc: "/tentang",
+      lastmod: now,
+      changefreq: "monthly",
+      priority: 0.7,
+    },
+    {
+      loc: "/kontak",
+      lastmod: now,
+      changefreq: "monthly",
+      priority: 0.7,
+    },
+  ];
 
-  const dynamicUrls = potensi.map((p) => `/potensi/${p.id}`);
+  // URL dinamis potensi
+  const dynamicUrls = potensi.map((p) => ({
+    loc: `/potensi/${p.id}`,
+    lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString() : now,
+    changefreq: "weekly",
+    priority: 0.5,
+  }));
 
   const urls = [...staticUrls, ...dynamicUrls];
 
@@ -19,7 +54,10 @@ export async function GET() {
     .map(
       (url) => `
     <url>
-      <loc>${baseUrl}${url}</loc>
+      <loc>${baseUrl}${url.loc}</loc>
+      <lastmod>${url.lastmod}</lastmod>
+      <changefreq>${url.changefreq}</changefreq>
+      <priority>${url.priority}</priority>
     </url>`
     )
     .join("")}
