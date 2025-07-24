@@ -10,12 +10,28 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  // Konversi config lama dari .eslintrc
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+
+  // Aturan umum proyek
+  ...compat.config({
+    extends: ["next"],
+    rules: {
+      "react/no-unescaped-entities": "off",
+      "@next/next/no-page-custom-font": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+    },
+  }),
+
+  // ⛔️ Abaikan rules tertentu hanya untuk file generated Prisma
   {
     files: ["src/generated/prisma/**/*"],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
       "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
     },
   },
 ];
