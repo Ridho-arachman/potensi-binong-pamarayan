@@ -5,10 +5,11 @@ import { potensiSchema } from "@/lib/zod";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params;
   const potensi = await prisma.potensi.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { images: true },
   });
   if (!potensi)
@@ -18,8 +19,9 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params;
   const form = await req.formData();
   const title = form.get("title") as string;
   const category = form.get("category") as string;
@@ -46,7 +48,7 @@ export async function PATCH(
 
   // Ambil data lama
   const old = await prisma.potensi.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { images: true },
   });
   if (!old) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -89,7 +91,7 @@ export async function PATCH(
 
   // Update potensi
   const potensi = await prisma.potensi.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       title,
       category,
@@ -112,12 +114,13 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params;
   try {
     // Hapus gambar dari Supabase Storage dan database
     const potensi = await prisma.potensi.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { images: true },
     });
     if (potensi) {
@@ -128,7 +131,7 @@ export async function DELETE(
         await supabase.storage.from("potensi-images").remove([fileName]);
       }
     }
-    await prisma.potensi.delete({ where: { id: params.id } });
+    await prisma.potensi.delete({ where: { id } });
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error("Error saat menghapus potensi:", err);
