@@ -27,6 +27,7 @@ export async function middleware(request: NextRequest) {
         new TextEncoder().encode(ACCESS_TOKEN_SECRET)
       );
       return NextResponse.next();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
