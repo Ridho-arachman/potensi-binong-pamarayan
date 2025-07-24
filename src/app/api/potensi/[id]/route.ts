@@ -3,25 +3,29 @@ import prisma from "@/lib/prisma";
 import { supabase } from "@/lib/supabase";
 import { potensiSchema } from "@/lib/zod";
 
-export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
+// GET /api/potensi/[id]
+export async function GET(req: NextRequest) {
+  const id = req.nextUrl.pathname.split("/").pop();
+  if (!id)
+    return NextResponse.json({ error: "ID tidak ditemukan" }, { status: 400 });
+
   const potensi = await prisma.potensi.findUnique({
     where: { id },
     include: { images: true },
   });
+
   if (!potensi)
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+
   return NextResponse.json(potensi);
 }
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
+// PATCH /api/potensi/[id]
+export async function PATCH(req: NextRequest) {
+  const id = req.nextUrl.pathname.split("/").pop();
+  if (!id)
+    return NextResponse.json({ error: "ID tidak ditemukan" }, { status: 400 });
+
   const form = await req.formData();
   const title = form.get("title") as string;
   const category = form.get("category") as string;
@@ -32,7 +36,6 @@ export async function PATCH(
     (form.get("existingImageIds") as string) || "[]"
   );
 
-  // Validasi Zod
   const result = potensiSchema.safeParse({
     title,
     category,
@@ -46,26 +49,21 @@ export async function PATCH(
     );
   }
 
-  // Ambil data lama
   const old = await prisma.potensi.findUnique({
     where: { id },
     include: { images: true },
   });
   if (!old) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  // Hapus gambar yang tidak ada di existingImageIds dari Supabase Storage dan database
   const toDelete = old.images.filter(
     (img) => !existingImageIds.includes(img.id)
   );
   for (const img of toDelete) {
-    // Hapus dari Supabase Storage
-    const urlParts = img.url.split("/");
-    const fileName = urlParts[urlParts.length - 1];
+    const fileName = img.url.split("/").pop()!;
     await supabase.storage.from("potensi-images").remove([fileName]);
     await prisma.potensiImage.delete({ where: { id: img.id } });
   }
 
-  // Upload gambar baru ke Supabase Storage
   const imageUrls: string[] = [];
   for (const file of files) {
     if (!file || typeof file === "string") continue;
@@ -78,10 +76,7 @@ export async function PATCH(
       });
     if (uploadResult.error) {
       return NextResponse.json(
-        {
-          error: "Gagal upload gambar ke storage",
-          detail: uploadResult.error.message,
-        },
+        { error: "Gagal upload gambar", detail: uploadResult.error.message },
         { status: 500 }
       );
     }
@@ -89,7 +84,6 @@ export async function PATCH(
     imageUrls.push(imageUrl);
   }
 
-  // Update potensi
   const potensi = await prisma.potensi.update({
     where: { id },
     data: {
@@ -109,32 +103,33 @@ export async function PATCH(
     },
     include: { images: true },
   });
+
   return NextResponse.json(potensi);
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params;
+// DELETE /api/potensi/[id]
+export async function DELETE(req: NextRequest) {
+  const id = req.nextUrl.pathname.split("/").pop();
+  if (!id)
+    return NextResponse.json({ error: "ID tidak ditemukan" }, { status: 400 });
+
   try {
-    // Hapus gambar dari Supabase Storage dan database
     const potensi = await prisma.potensi.findUnique({
       where: { id },
       include: { images: true },
     });
+
     if (potensi) {
       for (const img of potensi.images) {
-        // Hapus dari Supabase Storage
-        const urlParts = img.url.split("/");
-        const fileName = urlParts[urlParts.length - 1];
+        const fileName = img.url.split("/").pop()!;
         await supabase.storage.from("potensi-images").remove([fileName]);
       }
     }
+
     await prisma.potensi.delete({ where: { id } });
+
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Error saat menghapus potensi:", err);
     return NextResponse.json(
       { error: (err as Error).message || "Internal Server Error" },
       { status: 500 }
