@@ -130,8 +130,8 @@ export default async function HomePage() {
                   <Image
                     src={p.mainImage}
                     alt={p.title}
-                    width={100}
-                    height={100}
+                    width={700}
+                    height={700}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 ) : (
